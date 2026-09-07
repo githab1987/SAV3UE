@@ -2054,10 +2054,16 @@
   const SUPABASE_URL = 'https://frgqqjucluwnyltkweih.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZyZ3FxanVjbHV3bnlsdGt3ZWloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2OTgzODAsImV4cCI6MjEwNDI3NDM4MH0.wxDjpAic0yu8h2phFZRx2w2g7TIOIuJyleJUKbtdCoU';
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+let supabaseClient = null;
+
+if(window.supabase){
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+}else{
+  console.error("Supabase library failed to load.");
+}
   /*
    * SAV3UE INDEX #4
    * Single-file architecture.
