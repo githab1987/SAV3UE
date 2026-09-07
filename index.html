@@ -2048,7 +2048,16 @@
 
 <div id="toast" class="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+  const SUPABASE_URL = 'https://frgqqjucluwnyltkweih.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZyZ3FxanVjbHV3bnlsdGt3ZWloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2OTgzODAsImV4cCI6MjEwNDI3NDM4MH0.wxDjpAic0yu8h2phFZRx2w2g7TIOIuJyleJUKbtdCoU';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
   /*
    * SAV3UE INDEX #4
    * Single-file architecture.
@@ -2267,41 +2276,70 @@
 
   });
 
-  $("authForm").addEventListener("submit", event => {
+  $("authForm").addEventListener("submit", async event => {
 
-    event.preventDefault();
+  event.preventDefault();
 
-    const email = $("authEmail").value.trim();
-    const password = $("authPassword").value;
+  const email = $("authEmail").value.trim();
+  const password = $("authPassword").value;
 
-    if(!email || password.length < 6){
+  if(!email || password.length < 6){
+    $("authMessage").textContent =
+      "Please enter a valid email and a password of at least 6 characters.";
+    return;
+  }
+
+  $("authMessage").textContent =
+    state.authMode === "signup"
+      ? "Creating your account..."
+      : "Signing you in...";
+
+  try {
+
+    let result;
+
+    if(state.authMode === "signup"){
+
+      result = await supabaseClient.auth.signUp({
+        email,
+        password
+      });
+
+    }else{
+
+      result = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    }
+
+    if(result.error){
+      throw result.error;
+    }
+
+    const user = result.data.user;
+
+    state.authenticated = !!user;
+    state.userEmail = user?.email || email;
+
+    if(state.authMode === "signup" && !result.data.session){
+
       $("authMessage").textContent =
-        "Please enter a valid email and a password of at least 6 characters.";
+        "Account created. Please check your email to confirm your account.";
+
+      toast("Confirmation email sent.");
+
       return;
     }
 
-    /*
-     * TEMPORARY LOCAL AUTH.
-     *
-     * This will be replaced by:
-     *
-     * supabase.auth.signInWithPassword(...)
-     *
-     * or:
-     *
-     * supabase.auth.signUp(...)
-     */
-
-    state.authenticated = true;
-    state.userEmail = email;
-
     $("authMessage").textContent =
-      "Account accepted for this prototype.";
+      "Authentication successful.";
 
     toast(
       state.authMode === "signup"
-        ? "Account created locally."
-        : "Signed in locally."
+        ? "Account created."
+        : "Signed in."
     );
 
     setTimeout(() => {
@@ -2311,8 +2349,8 @@
         if(!state.humanApproved){
           showScreen("humanGate");
         }else{
-          showScreen("workspace");
-        }
+           await loadWorkspace();
+    }
 
       }else{
 
@@ -2322,21 +2360,78 @@
 
     },450);
 
-  });
+  }catch(error){
+
+    console.error("SAV3UE Auth Error:", error);
+
+    $("authMessage").textContent =
+      error.message || "Authentication failed.";
+
+    toast("Authentication failed.");
+
+  }
+
+});
 
   $("authBackBtn").addEventListener("click", back);
 
   /* ---------- HUMAN GATE ---------- */
 
-  $("approveHumanBtn").addEventListener("click", () => {
+$("approveHumanBtn").addEventListener("click", async () => {
+  state.humanApproved = true;
+  toast("Human approval recorded.");
+  await loadWorkspace();
+});
 
-    state.humanApproved = true;
+  /* ---------- REAL WORKSPACE ---------- */
 
-    toast("Human approval recorded.");
+async function loadWorkspace(){
+
+  if(!state.authenticated){
+    showScreen("auth");
+    return;
+  }
+
+  const { data, error } =
+    await supabaseClient.rpc("get_my_workspaces_v1");
+
+  if(error){
+    console.error("Workspace load error:", error);
+    toast("Unable to load workspace.");
+    return;
+  }
+
+  if(data && data.length > 0){
+
+    state.workspaceId = data[0].id;
 
     showScreen("workspace");
 
-  });
+    toast("Workspace loaded.");
+
+    return;
+  }
+
+  const { data: newWorkspace, error: createError } =
+    await supabaseClient.rpc(
+      "create_workspace_v1",
+      {
+        p_name: "My SAV3UE Workspace"
+      }
+    );
+
+  if(createError){
+    console.error("Workspace create error:", createError);
+    toast("Unable to create workspace.");
+    return;
+  }
+
+  state.workspaceId = newWorkspace;
+
+  showScreen("workspace");
+
+  toast("Workspace created.");
+}
 
   /* ---------- WORKSPACE ---------- */
 
@@ -2768,20 +2863,28 @@
 
   });
 
-  $("signOutBtn").addEventListener("click", () => {
+$("signOutBtn").addEventListener("click", async () => {
 
-    state.authenticated = false;
-    state.userEmail = null;
-    state.humanApproved = false;
+  const { error } = await supabaseClient.auth.signOut();
 
-    toast("Signed out.");
+  if(error){
+    console.error(error);
+    toast("Sign out failed.");
+    return;
+  }
 
-    state.history = [];
+  state.authenticated = false;
+  state.userEmail = null;
+  state.userId = null;
+  state.workspaceId = null;
+  state.humanApproved = false;
+  state.history = [];
 
-    showScreen("landing", false);
+  toast("Signed out.");
 
-  });
+  showScreen("landing", false);
 
+});
   /* ---------- INITIAL STATE ---------- */
 
   updateTopbar();
