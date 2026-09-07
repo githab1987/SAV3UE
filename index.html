@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>SAV3UE — Financial Intelligence Workspace</title>
+
   <meta
     name="description"
     content="SAV3UE turns financial data into clear, traceable decisions."
-  />
+  >
 
   <style>
     :root {
       --bg: #f7f7f4;
       --surface: #ffffff;
       --surface-soft: #f1f1ed;
+      --surface-hover: #fafaf8;
+
       --text: #181818;
-      --muted: #6d6d68;
-      --border: #e5e5df;
-      --accent: #202020;
+      --muted: #70706a;
+      --quiet: #96968f;
+
+      --border: #e4e4de;
+      --border-strong: #d5d5ce;
+
+      --accent: #1d1d1b;
       --accent-soft: #ecece7;
-      --success: #31745a;
-      --danger: #a44c4c;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.07);
-      --radius: 22px;
-      --max: 1120px;
+
+      --success: #3d765c;
+      --warning: #98743a;
+      --danger: #a24d4d;
+
+      --shadow-soft: 0 12px 38px rgba(0, 0, 0, .045);
+      --shadow-card: 0 20px 60px rgba(0, 0, 0, .065);
+
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 13px;
+
+      --max-width: 1120px;
     }
 
     * {
@@ -38,8 +53,10 @@
     body {
       margin: 0;
       min-height: 100vh;
+
       background: var(--bg);
       color: var(--text);
+
       font-family:
         Inter,
         ui-sans-serif,
@@ -48,11 +65,14 @@
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
+
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
 
     button,
-    input {
+    input,
+    textarea {
       font: inherit;
     }
 
@@ -60,108 +80,73 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      cursor: not-allowed;
+    }
+
     .hidden {
       display: none !important;
     }
 
+    .screen {
+      min-height: 100vh;
+    }
+
     /* =========================================================
-       LANDING
+       COMMON
        ========================================================= */
 
-    .landing {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 32px 20px;
+    .page-width {
+      width: min(var(--max-width), calc(100% - 40px));
+      margin-inline: auto;
     }
 
-    .landing-inner {
-      width: min(720px, 100%);
+    .center-column {
+      width: min(900px, 100%);
+      margin-inline: auto;
       text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .brand-mark {
-      width: 42px;
-      height: 42px;
-      border: 1.5px solid var(--text);
-      border-radius: 13px;
-      display: grid;
-      place-items: center;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-    }
-
-    .brand-name {
-      font-size: 25px;
-      line-height: 1;
-      font-weight: 800;
-      letter-spacing: -0.055em;
     }
 
     .eyebrow {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+
       padding: 8px 13px;
+
       border: 1px solid var(--border);
       border-radius: 999px;
-      background: rgba(255,255,255,.65);
+
+      background: rgba(255, 255, 255, .68);
+
       color: var(--muted);
-      font-size: 12px;
-      font-weight: 650;
-      letter-spacing: .04em;
-      margin-bottom: 26px;
-    }
 
-    .hero-title {
-      margin: 0;
-      max-width: 680px;
-      font-size: clamp(46px, 7vw, 78px);
-      line-height: .98;
-      letter-spacing: -0.065em;
-      font-weight: 780;
-    }
-
-    .hero-copy {
-      max-width: 610px;
-      margin: 28px auto 0;
-      color: var(--muted);
-      font-size: 17px;
-      line-height: 1.75;
-    }
-
-    .hero-actions {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 34px;
-      flex-wrap: wrap;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .055em;
     }
 
     .btn {
-      min-height: 48px;
-      padding: 0 21px;
-      border-radius: 14px;
+      min-height: 46px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      padding: 0 19px;
+
+      border-radius: var(--radius-sm);
       border: 1px solid transparent;
+
+      font-size: 13px;
+      font-weight: 750;
+
       transition:
         transform .18s ease,
         box-shadow .18s ease,
-        background .18s ease;
-      font-weight: 700;
+        background .18s ease,
+        border-color .18s ease;
     }
 
     .btn:hover {
@@ -169,417 +154,826 @@
     }
 
     .btn-primary {
-      background: var(--accent);
       color: white;
-      box-shadow: 0 8px 22px rgba(0,0,0,.12);
+      background: var(--accent);
+      box-shadow: 0 9px 24px rgba(0, 0, 0, .11);
     }
 
     .btn-primary:hover {
-      box-shadow: 0 12px 28px rgba(0,0,0,.16);
+      box-shadow: 0 13px 30px rgba(0, 0, 0, .15);
     }
 
     .btn-secondary {
-      background: white;
       color: var(--text);
+      background: white;
       border-color: var(--border);
+    }
+
+    .btn-quiet {
+      color: var(--muted);
+      background: transparent;
+      border-color: var(--border);
+    }
+
+    .btn-danger {
+      color: var(--danger);
+      background: white;
+      border-color: #ead8d8;
+    }
+
+    .text-button {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--text);
+      font-weight: 750;
+    }
+
+    /* =========================================================
+       LANDING
+       ========================================================= */
+
+    #landingScreen {
+      min-height: 100vh;
+
+      display: grid;
+      place-items: center;
+
+      padding: 34px 20px;
+    }
+
+    .landing-content {
+      width: min(760px, 100%);
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      text-align: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+
+      margin-bottom: 18px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+
+      display: grid;
+      place-items: center;
+
+      border: 1.5px solid var(--text);
+      border-radius: 13px;
+
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: -.04em;
+    }
+
+    .brand-name {
+      font-size: 25px;
+      line-height: 1;
+
+      font-weight: 850;
+      letter-spacing: -.055em;
+    }
+
+    .landing-content .eyebrow {
+      margin-bottom: 27px;
+    }
+
+    .hero-title {
+      margin: 0;
+
+      font-size: clamp(47px, 8vw, 82px);
+      line-height: .96;
+
+      letter-spacing: -.07em;
+      font-weight: 800;
+    }
+
+    .hero-copy {
+      width: min(620px, 100%);
+
+      margin: 28px auto 0;
+
+      color: var(--muted);
+
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 11px;
+
+      margin-top: 34px;
+
+      flex-wrap: wrap;
     }
 
     .hero-note {
       margin-top: 28px;
-      color: #898983;
-      font-size: 12px;
-      letter-spacing: .02em;
+
+      color: var(--quiet);
+
+      font-size: 11px;
+      letter-spacing: .025em;
     }
 
     /* =========================================================
-       APP
+       APP HEADER
        ========================================================= */
 
-    .app {
-      min-height: 100vh;
-      padding: 24px 20px 50px;
-    }
-
     .app-shell {
-      width: min(var(--max), 100%);
-      margin-inline: auto;
+      min-height: 100vh;
     }
 
     .app-header {
-      width: 100%;
+      width: min(var(--max-width), calc(100% - 40px));
+
+      margin-inline: auto;
+
+      min-height: 74px;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
-      padding: 8px 0 24px;
+
+      gap: 18px;
     }
 
     .app-brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
     }
 
     .app-brand .brand-mark {
-      width: 36px;
-      height: 36px;
+      width: 35px;
+      height: 35px;
+
       border-radius: 11px;
-      font-size: 11px;
+
+      font-size: 10px;
     }
 
     .app-brand-name {
-      font-weight: 800;
-      letter-spacing: -.045em;
+      font-size: 15px;
+      font-weight: 820;
+      letter-spacing: -.04em;
     }
 
-    .header-actions {
+    .header-right {
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .ghost-btn {
-      min-height: 40px;
-      padding: 0 14px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.72);
-      color: var(--text);
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 650;
-    }
+    .account-button {
+      min-height: 38px;
 
-    .user-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 7px 10px 7px 8px;
-      background: white;
+
+      padding: 4px 10px 4px 5px;
+
       border: 1px solid var(--border);
       border-radius: 999px;
-      font-size: 12px;
+
+      background: white;
+
       color: var(--muted);
+
+      font-size: 12px;
+      font-weight: 650;
     }
 
-    .avatar {
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: white;
+    .account-avatar {
+      width: 27px;
+      height: 27px;
+
       display: grid;
       place-items: center;
+
+      border-radius: 50%;
+
+      background: var(--accent);
+      color: white;
+
       font-size: 10px;
       font-weight: 800;
     }
 
-    .page-heading {
-      text-align: center;
-      padding: 46px 0 34px;
-    }
+    .simple-back {
+      min-height: 38px;
 
-    .page-heading h1 {
-      margin: 0;
-      font-size: clamp(34px, 5vw, 54px);
-      line-height: 1;
-      letter-spacing: -.06em;
-    }
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
 
-    .page-heading p {
-      margin: 15px auto 0;
-      max-width: 580px;
+      padding: 0 11px;
+
+      border: 1px solid transparent;
+      border-radius: 10px;
+
+      background: transparent;
+
       color: var(--muted);
-      line-height: 1.65;
+
+      font-size: 12px;
+      font-weight: 700;
+
+      transition:
+        background .18s ease,
+        color .18s ease;
+    }
+
+    .simple-back:hover {
+      background: var(--surface-soft);
+      color: var(--text);
     }
 
     /* =========================================================
-       ENTRY
+       SELECTION
        ========================================================= */
 
-    .entry-grid {
+    .selection-screen {
+      padding: 62px 0 70px;
+    }
+
+    .selection-heading h1 {
+      margin: 18px 0 0;
+
+      font-size: clamp(38px, 5.5vw, 58px);
+      line-height: .98;
+
+      letter-spacing: -.065em;
+    }
+
+    .selection-heading p {
+      width: min(610px, 100%);
+
+      margin: 17px auto 0;
+
+      color: var(--muted);
+
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .selection-grid {
       width: min(880px, 100%);
-      margin: 0 auto;
+
+      margin: 38px auto 0;
+
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+
       gap: 18px;
     }
 
-    .entry-card {
-      min-height: 275px;
+    .selection-card {
+      min-height: 290px;
+
       padding: 30px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      text-align: left;
+
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: var(--radius-lg);
+
       background: var(--surface);
-      box-shadow: var(--shadow);
+
+      box-shadow: var(--shadow-card);
+
       transition:
         transform .2s ease,
         box-shadow .2s ease,
         border-color .2s ease;
-      text-align: left;
     }
 
-    .entry-card:hover {
+    .selection-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 25px 65px rgba(0,0,0,.09);
-      border-color: #d8d8d1;
+
+      border-color: var(--border-strong);
+
+      box-shadow:
+        0 27px 70px rgba(0, 0, 0, .08);
     }
 
-    .card-icon {
-      width: 46px;
-      height: 46px;
+    .selection-icon {
+      width: 48px;
+      height: 48px;
+
       display: grid;
       place-items: center;
-      border-radius: 14px;
+
+      margin-bottom: 27px;
+
+      border-radius: 15px;
+
       background: var(--surface-soft);
-      margin-bottom: 26px;
-      font-size: 20px;
+
+      font-size: 19px;
     }
 
-    .entry-card h2 {
+    .selection-card h2 {
       margin: 0;
+
       font-size: 24px;
       letter-spacing: -.045em;
     }
 
-    .entry-card p {
-      color: var(--muted);
-      line-height: 1.65;
-      font-size: 14px;
+    .selection-card p {
       margin: 10px 0 25px;
+
+      color: var(--muted);
+
+      font-size: 13px;
+      line-height: 1.7;
     }
 
-    .card-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 42px;
-      padding: 0 15px;
-      border: 0;
-      border-radius: 12px;
-      background: var(--accent);
-      color: white;
-      font-size: 13px;
-      font-weight: 700;
+    .selection-card .card-action {
+      margin-top: auto;
     }
 
     .guest-preview {
       width: min(880px, 100%);
-      margin: 20px auto 0;
-      padding: 18px 20px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.5);
-      border-radius: 17px;
+
+      margin: 19px auto 0;
+
+      padding: 17px 20px;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+
+      gap: 11px;
+
+      border: 1px solid var(--border);
+      border-radius: 16px;
+
+      background: rgba(255, 255, 255, .48);
+
       color: var(--muted);
-      font-size: 13px;
+
+      font-size: 12px;
     }
 
     .guest-icon {
-      width: 30px;
-      height: 30px;
+      width: 29px;
+      height: 29px;
+
       display: grid;
       place-items: center;
-      border-radius: 50%;
-      background: var(--surface-soft);
-    }
 
-    .guest-preview button {
-      border: 0;
-      background: none;
+      border-radius: 50%;
+
+      background: var(--surface-soft);
+
       color: var(--text);
-      font-weight: 750;
-      padding: 0;
     }
 
     /* =========================================================
        WORKSPACE
        ========================================================= */
 
-    .workspace-view {
-      width: min(1040px, 100%);
-      margin-inline: auto;
+    .workspace-screen {
+      padding: 44px 0 70px;
     }
 
-    .workspace-hero {
-      width: 100%;
-      padding: 34px 0 28px;
+    .workspace-top {
+      text-align: center;
+    }
+
+    .workspace-top h1 {
+      margin: 15px 0 0;
+
+      font-size: clamp(39px, 6vw, 62px);
+      line-height: .97;
+
+      letter-spacing: -.07em;
+    }
+
+    .workspace-top p {
+      width: min(610px, 100%);
+
+      margin: 14px auto 0;
+
+      color: var(--muted);
+
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .workspace-actions {
+      margin-top: 28px;
+
       display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 24px;
+      justify-content: center;
+      gap: 10px;
+
+      flex-wrap: wrap;
     }
 
-    .workspace-hero-copy {
-      min-width: 0;
-    }
+    /* =========================================================
+       COMMAND BAR
+       ========================================================= */
 
-    .workspace-label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
+    .command-wrap {
+      width: min(820px, 100%);
 
-    .workspace-title {
-      margin: 0;
-      font-size: clamp(35px, 5vw, 58px);
-      letter-spacing: -.065em;
-      line-height: 1;
-    }
-
-    .workspace-description {
-      color: var(--muted);
-      margin: 13px 0 0;
-      line-height: 1.6;
-    }
-
-    .workspace-action {
-      flex-shrink: 0;
+      margin: 31px auto 0;
     }
 
     .command-bar {
       width: 100%;
       min-height: 58px;
-      padding: 0 18px;
+
       display: flex;
       align-items: center;
       gap: 12px;
+
+      padding: 0 17px;
+
       border: 1px solid var(--border);
       border-radius: 17px;
+
       background: white;
-      box-shadow: 0 10px 30px rgba(0,0,0,.045);
-      color: #8a8a84;
-      font-size: 14px;
+
+      box-shadow: var(--shadow-soft);
+
+      color: var(--quiet);
+
+      text-align: left;
+
+      transition:
+        border-color .18s ease,
+        box-shadow .18s ease;
+    }
+
+    .command-bar:hover,
+    .command-bar:focus {
+      outline: none;
+
+      border-color: var(--border-strong);
+
+      box-shadow:
+        0 15px 40px rgba(0, 0, 0, .065);
     }
 
     .command-icon {
-      width: 29px;
-      height: 29px;
+      width: 30px;
+      height: 30px;
+
+      flex-shrink: 0;
+
       display: grid;
       place-items: center;
-      background: var(--surface-soft);
+
       border-radius: 9px;
+
+      background: var(--surface-soft);
+
       color: var(--text);
+    }
+
+    .command-placeholder {
+      flex: 1;
+
       font-size: 13px;
     }
 
-    .dashboard-grid {
-      margin-top: 18px;
+    .command-shortcut {
+      padding: 5px 7px;
+
+      border: 1px solid var(--border);
+      border-radius: 7px;
+
+      color: var(--quiet);
+
+      font-size: 10px;
+    }
+
+    .command-menu {
+      margin-top: 8px;
+
+      padding: 7px;
+
+      border: 1px solid var(--border);
+      border-radius: 17px;
+
+      background: white;
+
+      box-shadow: var(--shadow-card);
+
+      text-align: left;
+    }
+
+    .command-item {
+      width: 100%;
+
+      display: flex;
+      align-items: center;
+      gap: 11px;
+
+      padding: 12px;
+
+      border: 0;
+      border-radius: 11px;
+
+      background: transparent;
+
+      text-align: left;
+      color: var(--text);
+
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .command-item:hover {
+      background: var(--surface-soft);
+    }
+
+    .command-item small {
+      display: block;
+
+      margin-top: 3px;
+
+      color: var(--muted);
+
+      font-weight: 450;
+    }
+
+    /* =========================================================
+       DASHBOARD
+       ========================================================= */
+
+    .dashboard {
+      width: min(1000px, 100%);
+
+      margin: 19px auto 0;
+
       display: grid;
-      grid-template-columns: 1.45fr .85fr;
+
+      grid-template-columns: minmax(0, 1.45fr) minmax(260px, .75fr);
+
       gap: 18px;
     }
 
     .panel {
+      overflow: hidden;
+
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: var(--radius-md);
+
       background: white;
-      box-shadow: 0 12px 35px rgba(0,0,0,.045);
+
+      box-shadow: var(--shadow-soft);
     }
 
     .panel-header {
-      padding: 22px 22px 17px;
+      padding: 20px 21px 17px;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
+
       gap: 15px;
+
       border-bottom: 1px solid var(--border);
     }
 
     .panel-title {
       margin: 0;
-      font-size: 15px;
+
+      font-size: 14px;
       letter-spacing: -.015em;
     }
 
     .panel-subtitle {
-      color: var(--muted);
-      font-size: 11px;
+      margin-top: 4px;
+
+      color: var(--quiet);
+
+      font-size: 10px;
     }
 
-    .empty-workspace {
-      padding: 56px 25px 62px;
+    .overview {
+      padding: 20px;
+    }
+
+    .overview-question {
+      color: var(--muted);
+
+      font-size: 11px;
+      font-weight: 700;
+
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .overview-title {
+      margin: 8px 0 0;
+
+      font-size: 25px;
+      letter-spacing: -.045em;
+    }
+
+    .overview-copy {
+      max-width: 590px;
+
+      margin: 10px 0 0;
+
+      color: var(--muted);
+
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .metric-grid {
+      margin-top: 22px;
+
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 10px;
+    }
+
+    .metric {
+      padding: 15px;
+
+      border: 1px solid var(--border);
+      border-radius: 14px;
+
+      background: var(--surface-hover);
+    }
+
+    .metric-label {
+      color: var(--quiet);
+
+      font-size: 10px;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -.025em;
+    }
+
+    .empty-state {
+      padding: 49px 24px 55px;
+
       text-align: center;
     }
 
     .empty-icon {
-      width: 52px;
-      height: 52px;
-      margin: 0 auto 20px;
+      width: 51px;
+      height: 51px;
+
+      margin: 0 auto 18px;
+
       display: grid;
       place-items: center;
+
       border-radius: 16px;
+
       background: var(--surface-soft);
-      font-size: 21px;
+
+      font-size: 20px;
     }
 
-    .empty-workspace h2 {
+    .empty-state h2 {
       margin: 0;
-      font-size: 23px;
+
+      font-size: 22px;
       letter-spacing: -.045em;
     }
 
-    .empty-workspace p {
-      max-width: 430px;
-      margin: 11px auto 24px;
+    .empty-state p {
+      width: min(430px, 100%);
+
+      margin: 10px auto 22px;
+
       color: var(--muted);
-      line-height: 1.65;
+
       font-size: 13px;
+      line-height: 1.65;
     }
 
-    .stat-list {
+    .status-list {
       padding: 8px 20px 20px;
     }
 
-    .stat {
+    .status-row {
       display: flex;
+      align-items: center;
       justify-content: space-between;
+
       gap: 15px;
-      padding: 17px 0;
+
+      padding: 16px 0;
+
       border-bottom: 1px solid var(--border);
     }
 
-    .stat:last-child {
+    .status-row:last-child {
       border-bottom: 0;
     }
 
-    .stat-label {
+    .status-label {
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
     }
 
-    .stat-value {
+    .status-value {
+      font-size: 12px;
       font-weight: 750;
-      font-size: 13px;
+    }
+
+    .status-ready {
+      color: var(--success);
+    }
+
+    .status-quiet {
+      color: var(--quiet);
     }
 
     /* =========================================================
        INGESTION
        ========================================================= */
 
-    .ingestion-view {
-      width: min(980px, 100%);
-      margin-inline: auto;
+    .ingestion-screen {
+      padding: 45px 0 70px;
+    }
+
+    .ingestion-heading {
+      text-align: center;
+    }
+
+    .ingestion-heading h1 {
+      margin: 15px 0 0;
+
+      font-size: clamp(39px, 6vw, 60px);
+      line-height: .97;
+
+      letter-spacing: -.07em;
+    }
+
+    .ingestion-heading p {
+      width: min(640px, 100%);
+
+      margin: 15px auto 0;
+
+      color: var(--muted);
+
+      font-size: 14px;
+      line-height: 1.7;
     }
 
     .source-grid {
+      width: min(980px, 100%);
+
+      margin: 34px auto 0;
+
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+
+      gap: 11px;
     }
 
     .source-card {
-      min-height: 122px;
-      padding: 19px;
-      border: 1px solid var(--border);
-      border-radius: 17px;
-      background: white;
+      min-height: 125px;
+
+      padding: 18px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
       text-align: left;
+
+      border: 1px solid var(--border);
+      border-radius: 16px;
+
+      background: white;
+
       transition:
         transform .18s ease,
         border-color .18s ease,
@@ -588,126 +982,424 @@
 
     .source-card:hover {
       transform: translateY(-3px);
-      border-color: #d1d1ca;
-      box-shadow: 0 15px 35px rgba(0,0,0,.055);
+
+      border-color: var(--border-strong);
+
+      box-shadow: var(--shadow-soft);
     }
 
     .source-icon {
       width: 34px;
       height: 34px;
+
       display: grid;
       place-items: center;
-      border-radius: 10px;
-      background: var(--surface-soft);
+
       margin-bottom: 13px;
-      font-size: 14px;
+
+      border-radius: 10px;
+
+      background: var(--surface-soft);
+
+      font-size: 13px;
     }
 
     .source-card strong {
-      display: block;
-      font-size: 13px;
-      margin-bottom: 4px;
+      font-size: 12px;
     }
 
     .source-card span {
-      color: var(--muted);
-      font-size: 11px;
+      margin-top: 4px;
+
+      color: var(--quiet);
+
+      font-size: 10px;
+      line-height: 1.4;
     }
 
-    .data-controls {
-      margin-top: 18px;
+    .ingestion-controls {
+      margin-top: 19px;
+
       display: flex;
       justify-content: center;
-      gap: 10px;
+      align-items: center;
+
+      gap: 9px;
+
       flex-wrap: wrap;
     }
 
-    .danger-btn {
-      color: var(--danger);
-      background: white;
-      border: 1px solid #ead6d6;
-    }
+    .ingestion-note {
+      width: min(680px, 100%);
 
-    .source-note {
-      text-align: center;
-      color: #92928c;
-      font-size: 11px;
-      margin: 17px auto 0;
-      max-width: 650px;
+      margin: 15px auto 0;
+
+      color: var(--quiet);
+
+      font-size: 10px;
       line-height: 1.6;
+
+      text-align: center;
     }
 
     /* =========================================================
-       AUTH MODAL
+       GUEST
        ========================================================= */
 
-    .modal-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
+    .guest-banner {
+      width: min(760px, 100%);
+
+      margin: 30px auto 0;
+      padding: 15px 18px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      gap: 10px;
+
+      border: 1px solid var(--border);
+      border-radius: 15px;
+
+      background: rgba(255, 255, 255, .55);
+
+      color: var(--muted);
+
+      font-size: 11px;
+
+      text-align: center;
+    }
+
+    /* =========================================================
+       LEARN MORE
+       ========================================================= */
+
+    .learn-screen {
+      min-height: calc(100vh - 74px);
+
       display: grid;
       place-items: center;
+
+      padding: 50px 20px 80px;
+    }
+
+    .learn-content {
+      width: min(760px, 100%);
+
+      text-align: center;
+    }
+
+    .learn-content h1 {
+      margin: 21px 0 0;
+
+      font-size: clamp(40px, 7vw, 70px);
+      line-height: .97;
+
+      letter-spacing: -.07em;
+    }
+
+    .poetry {
+      width: min(650px, 100%);
+
+      margin: 30px auto 0;
+
+      color: var(--muted);
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      font-size: clamp(18px, 2.5vw, 23px);
+      line-height: 1.75;
+
+      letter-spacing: -.01em;
+    }
+
+    .learn-closing {
+      width: min(590px, 100%);
+
+      margin: 27px auto 0;
+
+      color: var(--text);
+
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .learn-back {
+      margin-top: 32px;
+    }
+
+    /* =========================================================
+       AUTH GATE
+       ========================================================= */
+
+    .auth-screen {
+      min-height: calc(100vh - 74px);
+
+      display: grid;
+      place-items: center;
+
+      padding: 40px 20px 70px;
+    }
+
+    .auth-card {
+      width: min(430px, 100%);
+
+      padding: 31px;
+
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+
+      background: white;
+
+      box-shadow: var(--shadow-card);
+
+      text-align: center;
+    }
+
+    .auth-icon {
+      width: 48px;
+      height: 48px;
+
+      margin: 0 auto 19px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 15px;
+
+      background: var(--surface-soft);
+    }
+
+    .auth-card h1 {
+      margin: 0;
+
+      font-size: 27px;
+      letter-spacing: -.05em;
+    }
+
+    .auth-card p {
+      margin: 10px auto 23px;
+
+      color: var(--muted);
+
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .auth-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .auth-switch {
+      margin-top: 17px;
+
+      color: var(--muted);
+
+      font-size: 11px;
+    }
+
+    .auth-switch button {
+      border: 0;
+      background: transparent;
+
+      color: var(--text);
+
+      font-weight: 750;
+    }
+
+    /* =========================================================
+       HUMAN GATE
+       ========================================================= */
+
+    .gate-layer {
+      position: fixed;
+      inset: 0;
+
+      z-index: 100;
+
+      display: grid;
+      place-items: center;
+
       padding: 20px;
-      background: rgba(18,18,16,.32);
+
+      background: rgba(20, 20, 18, .31);
+
       backdrop-filter: blur(8px);
     }
 
-    .modal {
-      width: min(420px, 100%);
-      background: white;
+    .gate-card {
+      width: min(470px, 100%);
+
+      padding: 29px;
+
       border: 1px solid var(--border);
-      border-radius: 24px;
-      box-shadow: 0 30px 100px rgba(0,0,0,.18);
-      padding: 28px;
+      border-radius: 23px;
+
+      background: white;
+
+      box-shadow:
+        0 35px 100px rgba(0, 0, 0, .17);
+
+      text-align: center;
     }
 
-    .modal h2 {
+    .gate-icon {
+      width: 48px;
+      height: 48px;
+
+      margin: 0 auto 18px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 15px;
+
+      background: var(--surface-soft);
+    }
+
+    .gate-card h2 {
       margin: 0;
+
       font-size: 25px;
       letter-spacing: -.045em;
     }
 
-    .modal p {
+    .gate-card p {
+      margin: 10px auto 21px;
+
       color: var(--muted);
-      line-height: 1.6;
+
       font-size: 13px;
-      margin: 9px 0 22px;
+      line-height: 1.65;
     }
 
-    .form-group {
-      margin-bottom: 13px;
-    }
+    .gate-check {
+      padding: 14px;
 
-    .form-group label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .form-group input {
-      width: 100%;
-      height: 46px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0 13px;
-      outline: none;
-      background: #fbfbfa;
+      border-radius: 13px;
+
+      background: var(--surface-hover);
+
+      color: var(--text);
+
+      font-size: 12px;
+      line-height: 1.6;
     }
 
-    .form-group input:focus {
-      border-color: #aaa;
-      background: white;
-    }
-
-    .modal-actions {
+    .gate-actions {
       display: flex;
+      justify-content: center;
+
       gap: 9px;
-      margin-top: 20px;
+
+      margin-top: 19px;
     }
 
-    .modal-actions .btn {
-      flex: 1;
+    /* =========================================================
+       ACCOUNT PANEL
+       ========================================================= */
+
+    .account-layer {
+      position: fixed;
+      inset: 0;
+
+      z-index: 90;
+
+      display: flex;
+      justify-content: flex-end;
+
+      background: rgba(20, 20, 18, .18);
+
+      backdrop-filter: blur(4px);
+    }
+
+    .account-panel {
+      width: min(360px, 92vw);
+      height: 100%;
+
+      padding: 27px;
+
+      background: white;
+
+      border-left: 1px solid var(--border);
+
+      box-shadow:
+        -20px 0 60px rgba(0, 0, 0, .08);
+    }
+
+    .account-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 15px;
+    }
+
+    .account-panel h2 {
+      margin: 0;
+
+      font-size: 22px;
+      letter-spacing: -.045em;
+    }
+
+    .account-profile {
+      margin-top: 28px;
+
+      padding: 18px;
+
+      border: 1px solid var(--border);
+      border-radius: 17px;
+
+      background: var(--surface-hover);
+
+      text-align: center;
+    }
+
+    .large-avatar {
+      width: 54px;
+      height: 54px;
+
+      margin: 0 auto 12px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 50%;
+
+      background: var(--accent);
+      color: white;
+
+      font-weight: 800;
+    }
+
+    .account-profile strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .account-profile span {
+      display: block;
+
+      margin-top: 4px;
+
+      color: var(--muted);
+
+      font-size: 11px;
+    }
+
+    .account-actions {
+      margin-top: 18px;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 8px;
     }
 
     /* =========================================================
@@ -716,25 +1408,45 @@
 
     .toast {
       position: fixed;
+
       left: 50%;
       bottom: 25px;
+
       z-index: 200;
-      transform: translate(-50%, 20px);
+
+      width: min(380px, calc(100vw - 30px));
+
+      padding: 13px 16px;
+
+      transform: translate(-50%, 18px);
+
       opacity: 0;
+
       pointer-events: none;
-      min-width: min(360px, calc(100vw - 30px));
-      padding: 13px 17px;
+
       border: 1px solid var(--border);
       border-radius: 14px;
-      background: rgba(255,255,255,.96);
-      box-shadow: 0 15px 50px rgba(0,0,0,.12);
+
+      background: rgba(255, 255, 255, .97);
+
+      box-shadow:
+        0 17px 50px rgba(0, 0, 0, .12);
+
       text-align: center;
-      font-size: 13px;
-      transition: opacity .22s ease, transform .22s ease;
+
+      color: var(--text);
+
+      font-size: 12px;
+      line-height: 1.45;
+
+      transition:
+        opacity .22s ease,
+        transform .22s ease;
     }
 
     .toast.show {
       opacity: 1;
+
       transform: translate(-50%, 0);
     }
 
@@ -742,16 +1454,22 @@
        FOOTER
        ========================================================= */
 
-    .app-footer {
-      width: 100%;
+    .footer {
+      width: min(var(--max-width), calc(100% - 40px));
+
+      margin: 0 auto;
+
+      padding: 20px 0 28px;
+
       text-align: center;
-      margin-top: 45px;
-      color: #999992;
-      font-size: 11px;
+
+      color: var(--quiet);
+
+      font-size: 10px;
     }
 
     /* =========================================================
-       TABLET
+       RESPONSIVE
        ========================================================= */
 
     @media (max-width: 900px) {
@@ -759,22 +1477,46 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
-      .dashboard-grid {
+      .dashboard {
         grid-template-columns: 1fr;
       }
     }
 
-    /* =========================================================
-       MOBILE
-       ========================================================= */
-
     @media (max-width: 760px) {
-      .landing {
-        padding: 28px 18px;
+      .page-width,
+      .app-header,
+      .footer {
+        width: min(100% - 32px, var(--max-width));
+      }
+
+      .selection-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .selection-card {
+        min-height: 255px;
+      }
+
+      .source-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .account-button span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #landingScreen {
+        padding: 27px 17px;
       }
 
       .hero-title {
-        font-size: clamp(44px, 14vw, 65px);
+        font-size: clamp(44px, 14vw, 64px);
       }
 
       .hero-copy {
@@ -782,80 +1524,65 @@
         line-height: 1.7;
       }
 
-      .entry-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .entry-card {
-        min-height: auto;
-      }
-
-      .workspace-hero {
-        align-items: flex-start;
+      .hero-actions {
+        width: 100%;
         flex-direction: column;
       }
 
-      .workspace-action {
-        width: 100%;
+      .hero-actions .btn {
+        width: min(280px, 100%);
       }
 
-      .workspace-action .btn {
-        width: 100%;
+      .selection-screen,
+      .workspace-screen,
+      .ingestion-screen {
+        padding-top: 35px;
       }
 
-      .source-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .selection-heading h1,
+      .workspace-top h1,
+      .ingestion-heading h1 {
+        font-size: 40px;
       }
 
-      .guest-preview {
-        align-items: center;
-        flex-wrap: wrap;
-        text-align: center;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .app {
-        padding: 18px 14px 40px;
-      }
-
-      .app-header {
-        padding-bottom: 15px;
-      }
-
-      .header-actions .user-pill {
-        display: none;
-      }
-
-      .page-heading {
-        padding: 35px 0 27px;
-      }
-
-      .page-heading h1 {
-        font-size: 38px;
-      }
-
-      .entry-card {
+      .selection-card {
         padding: 24px;
-        border-radius: 19px;
+        border-radius: 20px;
       }
 
       .source-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 9px;
+        gap: 8px;
       }
 
       .source-card {
-        min-height: 110px;
-        padding: 15px;
+        min-height: 111px;
+        padding: 14px;
       }
 
-      .workspace-title {
-        font-size: 39px;
+      .source-card span {
+        font-size: 9px;
       }
 
-      .modal {
-        padding: 23px;
+      .guest-preview,
+      .guest-banner {
+        flex-wrap: wrap;
+      }
+
+      .gate-card,
+      .auth-card {
+        padding: 24px;
+      }
+
+      .gate-actions {
+        flex-direction: column-reverse;
+      }
+
+      .gate-actions .btn {
+        width: 100%;
+      }
+
+      .poetry {
+        font-size: 18px;
       }
     }
   </style>
@@ -864,11 +1591,12 @@
 <body>
 
   <!-- =======================================================
-       LANDING PAGE
+       LANDING
        ======================================================= -->
 
-  <section id="landing" class="landing">
-    <div class="landing-inner">
+  <section id="landingScreen" class="screen">
+
+    <div class="landing-content">
 
       <div class="brand">
         <div class="brand-mark">S3</div>
@@ -890,13 +1618,21 @@
       </p>
 
       <div class="hero-actions">
-        <button class="btn btn-primary" onclick="enterApp()">
+
+        <button
+          class="btn btn-primary"
+          onclick="navigateTo('selection')"
+        >
           Get Started
         </button>
 
-        <button class="btn btn-secondary" onclick="learnMore()">
+        <button
+          class="btn btn-secondary"
+          onclick="navigateTo('learn')"
+        >
           Learn More
         </button>
+
       </div>
 
       <div class="hero-note">
@@ -904,475 +1640,766 @@
       </div>
 
     </div>
+
   </section>
 
 
   <!-- =======================================================
-       APPLICATION
+       APPLICATION SHELL
        ======================================================= -->
 
-  <main id="app" class="app hidden">
+  <div id="appShell" class="app-shell hidden">
 
-    <div class="app-shell">
+    <header class="app-header">
 
-      <header class="app-header">
+      <div class="app-brand">
 
-        <div class="app-brand">
-          <div class="brand-mark">S3</div>
-          <div class="app-brand-name">SAV3UE</div>
+        <div class="brand-mark">
+          S3
         </div>
 
-        <div class="header-actions">
+        <div class="app-brand-name">
+          SAV3UE
+        </div>
 
-          <div id="userPill" class="user-pill hidden">
-            <div id="avatar" class="avatar">G</div>
-            <span id="userName">Guest</span>
+      </div>
+
+
+      <div class="header-right">
+
+        <button
+          id="backButton"
+          class="simple-back hidden"
+          onclick="goBack()"
+          aria-label="Go back"
+        >
+          ← Back
+        </button>
+
+        <button
+          id="accountButton"
+          class="account-button hidden"
+          onclick="openAccount()"
+          aria-label="Open account"
+        >
+          <div id="accountAvatar" class="account-avatar">
+            U
           </div>
 
+          <span id="accountName">
+            Account
+          </span>
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         SELECTION
+         ===================================================== -->
+
+    <section
+      id="selectionView"
+      class="selection-screen page-width hidden"
+    >
+
+      <div class="center-column selection-heading">
+
+        <div class="eyebrow">
+          SAV3UE Workspace
+        </div>
+
+        <h1>
+          Choose your workspace.
+        </h1>
+
+        <p>
+          One home for your financial intelligence.
+          Bring data in once, then let the workspace help you
+          understand what matters.
+        </p>
+
+      </div>
+
+
+      <div class="selection-grid">
+
+        <article class="selection-card">
+
+          <div class="selection-icon">
+            ◫
+          </div>
+
+          <h2>
+            Workspace
+          </h2>
+
+          <p>
+            Your central place to understand financial data,
+            review insights, follow evidence, check calculations,
+            and decide what deserves attention.
+          </p>
+
           <button
-            id="authButton"
-            class="ghost-btn"
-            onclick="openAuth()"
+            class="btn btn-primary card-action"
+            onclick="requestWorkspace()"
+          >
+            Open Workspace →
+          </button>
+
+        </article>
+
+
+        <article class="selection-card">
+
+          <div class="selection-icon">
+            ↑
+          </div>
+
+          <h2>
+            Ingestion Data
+          </h2>
+
+          <p>
+            The single entry door for your data.
+            Bring in files, documents, connected sources,
+            or other evidence that belongs in your workspace.
+          </p>
+
+          <button
+            class="btn btn-primary card-action"
+            onclick="requestIngestion()"
+          >
+            Bring Data In →
+          </button>
+
+        </article>
+
+      </div>
+
+
+      <div class="guest-preview">
+
+        <div class="guest-icon">
+          ◉
+        </div>
+
+        <span>
+          Want to look around first?
+        </span>
+
+        <button
+          class="text-button"
+          onclick="openGuestPreview()"
+        >
+          Enter Guest Preview →
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         WORKSPACE
+         ===================================================== -->
+
+    <section
+      id="workspaceView"
+      class="workspace-screen page-width hidden"
+    >
+
+      <div class="workspace-top">
+
+        <div class="eyebrow">
+          Quiet Intelligence
+        </div>
+
+        <h1>
+          Let’s work.
+        </h1>
+
+        <p>
+          Your workspace is where evidence becomes understanding,
+          calculations become traceable,
+          and important things get your attention.
+        </p>
+
+        <div class="workspace-actions">
+
+          <button
+            class="btn btn-primary"
+            onclick="requestIngestion()"
+          >
+            + Add Data
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- COMMAND INTERFACE -->
+
+      <div class="command-wrap">
+
+        <button
+          id="commandBar"
+          class="command-bar"
+          onclick="toggleCommandMenu()"
+          aria-expanded="false"
+        >
+
+          <div class="command-icon">
+            ⌕
+          </div>
+
+          <span class="command-placeholder">
+            What would you like to do?
+          </span>
+
+          <span class="command-shortcut">
+            Explore
+          </span>
+
+        </button>
+
+
+        <div
+          id="commandMenu"
+          class="command-menu hidden"
+        >
+
+          <button
+            class="command-item"
+            onclick="commandAction('review')"
+          >
+            <div>
+              Review financial data
+              <small>
+                See what changed and what matters.
+              </small>
+            </div>
+          </button>
+
+          <button
+            class="command-item"
+            onclick="commandAction('anomaly')"
+          >
+            <div>
+              Find unusual activity
+              <small>
+                Surface items that may deserve attention.
+              </small>
+            </div>
+          </button>
+
+          <button
+            class="command-item"
+            onclick="commandAction('tax')"
+          >
+            <div>
+              Check tax calculations
+              <small>
+                Review calculation evidence and rule context.
+              </small>
+            </div>
+          </button>
+
+          <button
+            class="command-item"
+            onclick="commandAction('unresolved')"
+          >
+            <div>
+              Review unresolved evidence
+              <small>
+                See information that needs human attention.
+              </small>
+            </div>
+          </button>
+
+          <button
+            class="command-item"
+            onclick="commandAction('activity')"
+          >
+            <div>
+              View recent activity
+              <small>
+                Follow what happened inside the workspace.
+              </small>
+            </div>
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- DASHBOARD -->
+
+      <div class="dashboard">
+
+        <section class="panel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h2 class="panel-title">
+                Financial Overview
+              </h2>
+
+              <div class="panel-subtitle">
+                Evidence-led workspace summary
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div id="workspaceMainContent">
+
+            <div class="empty-state">
+
+              <div class="empty-icon">
+                ✦
+              </div>
+
+              <h2>
+                Your workspace is ready.
+              </h2>
+
+              <p>
+                Bring your financial data in and let’s get started.
+                SAV3UE keeps evidence, validation, calculations,
+                and traceability connected.
+              </p>
+
+              <button
+                class="btn btn-primary"
+                onclick="requestIngestion()"
+              >
+                + Add Data
+              </button>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <aside class="panel">
+
+          <div class="panel-header">
+
+            <div>
+
+              <h2 class="panel-title">
+                Workspace Status
+              </h2>
+
+              <div class="panel-subtitle">
+                Current state
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="status-list">
+
+            <div class="status-row">
+              <span class="status-label">
+                Data Sources
+              </span>
+
+              <span
+                id="statusSources"
+                class="status-value status-quiet"
+              >
+                0
+              </span>
+            </div>
+
+            <div class="status-row">
+              <span class="status-label">
+                Records
+              </span>
+
+              <span
+                id="statusRecords"
+                class="status-value status-quiet"
+              >
+                0
+              </span>
+            </div>
+
+            <div class="status-row">
+              <span class="status-label">
+                Validation
+              </span>
+
+              <span class="status-value status-ready">
+                Ready
+              </span>
+            </div>
+
+            <div class="status-row">
+              <span class="status-label">
+                Evidence
+              </span>
+
+              <span class="status-value status-ready">
+                Traceable
+              </span>
+            </div>
+
+          </div>
+
+        </aside>
+
+      </div>
+
+
+      <div
+        id="guestBanner"
+        class="guest-banner hidden"
+      >
+        ◉ Guest Preview · Read-only · Data stays outside the door.
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INGESTION
+         ===================================================== -->
+
+    <section
+      id="ingestionView"
+      class="ingestion-screen page-width hidden"
+    >
+
+      <div class="ingestion-heading">
+
+        <div class="eyebrow">
+          Single Entry Door
+        </div>
+
+        <h1>
+          Bring your data in.
+        </h1>
+
+        <p>
+          Choose where your financial evidence lives.
+          Once connected, the resulting data belongs in your Workspace —
+          not in a second data home.
+        </p>
+
+      </div>
+
+
+      <div class="source-grid">
+
+        <button
+          class="source-card"
+          onclick="requestSource('CSV')"
+        >
+          <div class="source-icon">▤</div>
+          <strong>CSV</strong>
+          <span>Structured tabular data</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('Excel / XLSX')"
+        >
+          <div class="source-icon">▦</div>
+          <strong>Excel / XLSX</strong>
+          <span>Spreadsheet files</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('Google Sheets')"
+        >
+          <div class="source-icon">▥</div>
+          <strong>Google Sheets</strong>
+          <span>Connected spreadsheets</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('PDF')"
+        >
+          <div class="source-icon">▧</div>
+          <strong>PDF</strong>
+          <span>Reports and documents</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('JSON')"
+        >
+          <div class="source-icon">{ }</div>
+          <strong>JSON</strong>
+          <span>Structured records</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('OCR')"
+        >
+          <div class="source-icon">⌁</div>
+          <strong>OCR</strong>
+          <span>Scanned evidence</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('Gmail')"
+        >
+          <div class="source-icon">✉</div>
+          <strong>Gmail</strong>
+          <span>Email evidence</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('Google Drive')"
+        >
+          <div class="source-icon">◫</div>
+          <strong>Google Drive</strong>
+          <span>Cloud files</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('URL')"
+        >
+          <div class="source-icon">↗</div>
+          <strong>URL</strong>
+          <span>Web-based source</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('Manual Entry')"
+        >
+          <div class="source-icon">✎</div>
+          <strong>Manual Entry</strong>
+          <span>Enter evidence directly</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('API')"
+        >
+          <div class="source-icon">⌘</div>
+          <strong>API</strong>
+          <span>System integration</span>
+        </button>
+
+        <button
+          class="source-card"
+          onclick="requestSource('More Sources')"
+        >
+          <div class="source-icon">+</div>
+          <strong>More Sources</strong>
+          <span>Additional connectors</span>
+        </button>
+
+      </div>
+
+
+      <div class="ingestion-controls">
+
+        <button
+          class="btn btn-secondary"
+          onclick="requestReset()"
+        >
+          Reset Data
+        </button>
+
+        <button
+          class="btn btn-danger"
+          onclick="requestDelete()"
+        >
+          Delete Data
+        </button>
+
+      </div>
+
+
+      <p class="ingestion-note">
+        Reset and Delete are intentionally kept here.
+        The Workspace is the home of your data; Ingestion is the door.
+      </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         LEARN MORE
+         ===================================================== -->
+
+    <section
+      id="learnView"
+      class="learn-screen hidden"
+    >
+
+      <div class="learn-content">
+
+        <div class="eyebrow">
+          Why SAV3UE
+        </div>
+
+        <h1>
+          Let the evidence speak.
+        </h1>
+
+        <div class="poetry">
+          Data can be loud.<br>
+          Numbers can be complicated.<br>
+          Reports can hide the question behind the answer.<br><br>
+
+          SAV3UE begins somewhere quieter.<br>
+          With evidence.<br>
+          With a calculation that can be followed.<br>
+          With a result that does not ask you to simply believe it.<br><br>
+
+          The intelligence interprets.<br>
+          The engine calculates.<br>
+          The evidence proves.<br><br>
+
+          Because clarity is not about having more information.<br>
+          It is about knowing what the information means.
+        </div>
+
+        <p class="learn-closing">
+          SAV3UE is designed to turn financial complexity
+          into something people can understand, question,
+          verify, and act upon.
+        </p>
+
+        <button
+          class="btn btn-secondary learn-back"
+          onclick="goBack()"
+        >
+          ← Back
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         AUTH
+         ===================================================== -->
+
+    <section
+      id="authView"
+      class="auth-screen hidden"
+    >
+
+      <div class="auth-card">
+
+        <div class="auth-icon">
+          ◉
+        </div>
+
+        <h1 id="authTitle">
+          Welcome to SAV3UE.
+        </h1>
+
+        <p id="authDescription">
+          Sign in to continue to your workspace.
+        </p>
+
+        <div class="auth-actions">
+
+          <button
+            class="btn btn-primary"
+            onclick="simulateAuth('signin')"
           >
             Sign In
           </button>
 
           <button
-            id="backButton"
-            class="ghost-btn"
-            onclick="goLanding()"
+            class="btn btn-secondary"
+            onclick="simulateAuth('signup')"
           >
-            Back
+            Sign Up
           </button>
 
         </div>
 
-      </header>
-
-
-      <!-- =====================================================
-           ENTRY SCREEN
-           ===================================================== -->
-
-      <section id="entryScreen">
-
-        <div class="page-heading">
-          <h1>Choose your workspace.</h1>
-          <p>
-            One home for your financial intelligence.
-            Bring data in once, then let the workspace do the thinking.
-          </p>
+        <div class="auth-switch">
+          Authentication will be connected to Supabase next.
         </div>
 
-        <div class="entry-grid">
+      </div>
 
-          <article class="entry-card">
+    </section>
 
-            <div class="card-icon">◫</div>
 
-            <h2>Workspace</h2>
+    <footer class="footer">
+      SAV3UE · Evidence first · Traceable by design · Built for clarity
+    </footer>
 
-            <p>
-              Your central place to understand data, review insights,
-              follow evidence, and turn numbers into decisions.
-            </p>
-
-            <button
-              class="card-action"
-              onclick="openWorkspace()"
-            >
-              Open Workspace →
-            </button>
-
-          </article>
-
-
-          <article class="entry-card">
-
-            <div class="card-icon">↑</div>
-
-            <h2>Ingestion Data</h2>
-
-            <p>
-              The single entry door for your data.
-              Connect files, documents, services, URLs, or enter data manually.
-            </p>
-
-            <button
-              class="card-action"
-              onclick="openIngestion()"
-            >
-              Bring Data In →
-            </button>
-
-          </article>
-
-        </div>
-
-
-        <div class="guest-preview">
-
-          <div class="guest-icon">◉</div>
-
-          <span>
-            Want to look around first?
-          </span>
-
-          <button onclick="openGuestPreview()">
-            Enter Guest Preview →
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- =====================================================
-           WORKSPACE
-           ===================================================== -->
-
-      <section id="workspaceView" class="workspace-view hidden">
-
-        <div class="workspace-hero">
-
-          <div class="workspace-hero-copy">
-
-            <div class="workspace-label">
-              Quiet Intelligence
-            </div>
-
-            <h1 class="workspace-title">
-              Let’s work.
-            </h1>
-
-            <p class="workspace-description">
-              Your financial workspace is ready.
-              Everything starts with evidence.
-            </p>
-
-          </div>
-
-          <div class="workspace-action">
-
-            <button
-              class="btn btn-primary"
-              onclick="openIngestion()"
-            >
-              + Add Data
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <div class="command-bar">
-
-          <div class="command-icon">⌕</div>
-
-          <span>
-            What would you like to do?
-          </span>
-
-        </div>
-
-
-        <div class="dashboard-grid">
-
-          <section class="panel">
-
-            <div class="panel-header">
-
-              <div>
-                <h2 class="panel-title">
-                  Financial Snapshot
-                </h2>
-                <div class="panel-subtitle">
-                  Your data at a glance
-                </div>
-              </div>
-
-            </div>
-
-            <div id="workspaceContent">
-
-              <div class="empty-workspace">
-
-                <div class="empty-icon">✦</div>
-
-                <h2>
-                  Your workspace is ready.
-                </h2>
-
-                <p>
-                  Bring your data in and let’s get started.
-                  SAV3UE will keep the evidence, calculations,
-                  and traceability connected.
-                </p>
-
-                <button
-                  class="btn btn-primary"
-                  onclick="openIngestion()"
-                >
-                  + Add Data
-                </button>
-
-              </div>
-
-            </div>
-
-          </section>
-
-
-          <aside class="panel">
-
-            <div class="panel-header">
-
-              <div>
-                <h2 class="panel-title">
-                  Workspace Status
-                </h2>
-                <div class="panel-subtitle">
-                  Current state
-                </div>
-              </div>
-
-            </div>
-
-            <div class="stat-list">
-
-              <div class="stat">
-                <span class="stat-label">Data Sources</span>
-                <span id="sourceCount" class="stat-value">0</span>
-              </div>
-
-              <div class="stat">
-                <span class="stat-label">Records</span>
-                <span id="recordCount" class="stat-value">0</span>
-              </div>
-
-              <div class="stat">
-                <span class="stat-label">Audit Status</span>
-                <span class="stat-value">Ready</span>
-              </div>
-
-              <div class="stat">
-                <span class="stat-label">Evidence</span>
-                <span class="stat-value">Traceable</span>
-              </div>
-
-            </div>
-
-          </aside>
-
-        </div>
-
-      </section>
-
-
-      <!-- =====================================================
-           INGESTION
-           ===================================================== -->
-
-      <section id="ingestionView" class="ingestion-view hidden">
-
-        <div class="page-heading">
-
-          <div class="workspace-label">
-            Single Entry Door
-          </div>
-
-          <h1>
-            Bring your data in.
-          </h1>
-
-          <p>
-            Choose where your financial evidence lives.
-            Once ingested, it automatically becomes part of your Workspace.
-          </p>
-
-        </div>
-
-
-        <div class="source-grid">
-
-          <button class="source-card" onclick="simulateUpload('CSV')">
-            <div class="source-icon">▤</div>
-            <strong>CSV</strong>
-            <span>Comma-separated data</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('Excel / XLSX')">
-            <div class="source-icon">▦</div>
-            <strong>Excel / XLSX</strong>
-            <span>Spreadsheet files</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('Google Sheets')">
-            <div class="source-icon">▥</div>
-            <strong>Google Sheets</strong>
-            <span>Connected spreadsheets</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('PDF')">
-            <div class="source-icon">▧</div>
-            <strong>PDF</strong>
-            <span>Documents and reports</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('JSON')">
-            <div class="source-icon">{ }</div>
-            <strong>JSON</strong>
-            <span>Structured data</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('OCR')">
-            <div class="source-icon">⌁</div>
-            <strong>OCR</strong>
-            <span>Scanned documents</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('Gmail')">
-            <div class="source-icon">✉</div>
-            <strong>Gmail</strong>
-            <span>Email evidence</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('Google Drive')">
-            <div class="source-icon">◫</div>
-            <strong>Google Drive</strong>
-            <span>Cloud files</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('URL')">
-            <div class="source-icon">↗</div>
-            <strong>URL</strong>
-            <span>Web-based source</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('Manual Entry')">
-            <div class="source-icon">✎</div>
-            <strong>Manual Entry</strong>
-            <span>Enter data directly</span>
-          </button>
-
-          <button class="source-card" onclick="simulateUpload('API')">
-            <div class="source-icon">⌘</div>
-            <strong>API</strong>
-            <span>System integration</span>
-          </button>
-
-          <button class="source-card" onclick="showToast('More sources are on the way.')">
-            <div class="source-icon">+</div>
-            <strong>More Sources</strong>
-            <span>Expand the workspace</span>
-          </button>
-
-        </div>
-
-
-        <div class="data-controls">
-
-          <button
-            class="btn ghost-btn"
-            onclick="resetData()"
-          >
-            Reset Data
-          </button>
-
-          <button
-            class="btn danger-btn"
-            onclick="deleteData()"
-          >
-            Delete Data
-          </button>
-
-        </div>
-
-
-        <p class="source-note">
-          Data ingestion is the only entry door.
-          Your Workspace remains the single home for the resulting data.
-        </p>
-
-      </section>
-
-
-      <footer class="app-footer">
-        SAV3UE · Evidence first · Traceable by design · Built for clarity
-      </footer>
-
-    </div>
-
-  </main>
+  </div>
 
 
   <!-- =======================================================
-       AUTH MODAL
+       HUMAN GATE
        ======================================================= -->
 
   <div
-    id="authModal"
-    class="modal-layer hidden"
-    onclick="closeAuthOutside(event)"
+    id="gateLayer"
+    class="gate-layer hidden"
   >
 
-    <div
-      class="modal"
-      onclick="event.stopPropagation()"
-    >
+    <div class="gate-card">
 
-      <h2>Welcome back.</h2>
+      <div class="gate-icon">
+        ◇
+      </div>
 
-      <p>
-        Sign in to unlock your Workspace and Ingestion Data.
-        This demo stores the session locally in your browser.
+      <h2>
+        Human Gate
+      </h2>
+
+      <p id="gateDescription">
+        SAV3UE can prepare the evidence,
+        but important decisions remain yours.
       </p>
 
-      <div class="form-group">
-
-        <label for="email">
-          Email
-        </label>
-
-        <input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          autocomplete="email"
-        />
-
+      <div class="gate-check">
+        Review the evidence and context before continuing.
+        SAV3UE will not silently turn an uncertain result
+        into a decision.
       </div>
 
-      <div class="form-group">
-
-        <label for="name">
-          Name
-        </label>
-
-        <input
-          id="name"
-          type="text"
-          placeholder="Your name"
-          autocomplete="name"
-        />
-
-      </div>
-
-      <div class="modal-actions">
+      <div class="gate-actions">
 
         <button
           class="btn btn-secondary"
-          onclick="closeAuth()"
+          onclick="closeGate()"
         >
-          Cancel
+          Not Yet
         </button>
 
         <button
           class="btn btn-primary"
-          onclick="signIn()"
+          onclick="approveGate()"
         >
-          Sign In / Sign Up
+          I’ve Reviewed It
         </button>
 
       </div>
@@ -1383,438 +2410,150 @@
 
 
   <!-- =======================================================
+       ACCOUNT
+       ======================================================= -->
+
+  <div
+    id="accountLayer"
+    class="account-layer hidden"
+    onclick="closeAccountOutside(event)"
+  >
+
+    <aside
+      class="account-panel"
+      onclick="event.stopPropagation()"
+    >
+
+      <div class="account-panel-header">
+
+        <h2>
+          Your Account
+        </h2>
+
+        <button
+          class="simple-back"
+          onclick="closeAccount()"
+        >
+          Close
+        </button>
+
+      </div>
+
+
+      <div class="account-profile">
+
+        <div
+          id="largeAvatar"
+          class="large-avatar"
+        >
+          U
+        </div>
+
+        <strong id="profileName">
+          User
+        </strong>
+
+        <span id="profileEmail">
+          Connected account
+        </span>
+
+      </div>
+
+
+      <div class="account-actions">
+
+        <button
+          class="btn btn-secondary"
+          onclick="showToast('Account settings will live here once Supabase Auth is connected.')"
+        >
+          Account Settings
+        </button>
+
+        <button
+          class="btn btn-quiet"
+          onclick="signOut()"
+        >
+          Sign Out
+        </button>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+
+  <!-- =======================================================
        TOAST
        ======================================================= -->
 
-  <div id="toast" class="toast"></div>
+  <div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+  ></div>
 
 
   <script>
     /*
-     * SAV3UE
-     * Front-end prototype
+     * ========================================================
+     * SAV3UE INDEX v3
      *
-     * CSS + JavaScript intentionally live inside index.html.
-     * Backend / Supabase integration can be connected later.
+     * UI / UX FINALIZATION LAYER
+     *
+     * Backend integration is intentionally separated.
+     * Supabase Auth, Storage, ingestion, Core Engine,
+     * calculations and audit traces will be connected next.
+     *
+     * No fake financial calculations are performed here.
+     * ========================================================
      */
 
-    const STORAGE_KEY = "sav3ue_demo_user";
-    const DATA_KEY = "sav3ue_demo_data";
 
-    let currentView = "entry";
+    /* ========================================================
+       STATE
+       ======================================================== */
+
+    const state = {
+      currentView: "landing",
+      history: [],
+      pendingView: null,
+      pendingAction: null,
+      guestMode: false,
+
+      user: null,
+
+      dataSources: 0,
+      records: 0
+    };
 
 
     /* ========================================================
-       HELPERS
+       DOM
        ======================================================== */
 
-    function $(id) {
-      return document.getElementById(id);
-    }
-
-    function show(element) {
-      element.classList.remove("hidden");
-    }
-
-    function hide(element) {
-      element.classList.add("hidden");
-    }
-
-    function getUser() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY));
-      } catch {
-        return null;
-      }
-    }
-
-    function getData() {
-      try {
-        return JSON.parse(localStorage.getItem(DATA_KEY)) || [];
-      } catch {
-        return [];
-      }
-    }
-
-    function saveData(data) {
-      localStorage.setItem(DATA_KEY, JSON.stringify(data));
-    }
+    const $ = (id) => document.getElementById(id);
 
 
     /* ========================================================
-       LANDING
+       VIEW MAP
        ======================================================== */
 
-    function enterApp() {
-      hide($("landing"));
-      show($("app"));
-      renderEntry();
-    }
-
-    function goLanding() {
-      hide($("app"));
-      show($("landing"));
-      currentView = "landing";
-    }
-
-    function learnMore() {
-      showToast(
-        "SAV3UE is built around one idea: evidence should lead the decision."
-      );
-    }
-
-
-    /* ========================================================
-       ENTRY
-       ======================================================== */
-
-    function renderEntry() {
-      currentView = "entry";
-
-      show($("entryScreen"));
-      hide($("workspaceView"));
-      hide($("ingestionView"));
-
-      updateHeader();
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
-
-
-    /* ========================================================
-       AUTH
-       ======================================================== */
-
-    function openAuth() {
-      show($("authModal"));
-      setTimeout(() => {
-        $("email").focus();
-      }, 50);
-    }
-
-    function closeAuth() {
-      hide($("authModal"));
-    }
-
-    function closeAuthOutside(event) {
-      if (event.target === $("authModal")) {
-        closeAuth();
-      }
-    }
-
-    function signIn() {
-
-      const email = $("email").value.trim();
-      const name =
-        $("name").value.trim() ||
-        (email ? email.split("@")[0] : "User");
-
-      if (!email) {
-        showToast("A little email first. Then we can pretend this is serious.");
-        $("email").focus();
-        return;
-      }
-
-      const user = {
-        name,
-        email,
-        signedInAt: new Date().toISOString()
-      };
-
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(user)
-      );
-
-      closeAuth();
-
-      updateHeader();
-
-      showToast("Welcome. The numbers have been expecting you.");
-
-      if (currentView === "workspace") {
-        renderWorkspace();
-      }
-
-      if (currentView === "ingestion") {
-        renderIngestion();
-      }
-    }
-
-
-    function signOut() {
-
-      localStorage.removeItem(STORAGE_KEY);
-
-      showToast("Signed out. The numbers can breathe again.");
-
-      renderEntry();
-    }
-
-
-    function updateHeader() {
-
-      const user = getUser();
-
-      if (user) {
-
-        show($("userPill"));
-
-        $("userName").textContent = user.name;
-
-        $("avatar").textContent =
-          user.name.charAt(0).toUpperCase();
-
-        $("authButton").textContent = "Sign Out";
-
-        $("authButton").onclick = signOut;
-
-      } else {
-
-        hide($("userPill"));
-
-        $("authButton").textContent = "Sign In";
-
-        $("authButton").onclick = openAuth;
-      }
-    }
-
-
-    /* ========================================================
-       WORKSPACE
-       ======================================================== */
-
-    function openWorkspace() {
-
-      if (!getUser()) {
-        openAuth();
-        currentView = "workspace";
-        return;
-      }
-
-      renderWorkspace();
-    }
-
-    function renderWorkspace() {
-
-      currentView = "workspace";
-
-      hide($("entryScreen"));
-      hide($("ingestionView"));
-      show($("workspaceView"));
-
-      updateWorkspaceStats();
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
-
-    function updateWorkspaceStats() {
-
-      const data = getData();
-
-      $("sourceCount").textContent = data.length;
-
-      const records = data.reduce(
-        (sum, item) => sum + (item.records || 0),
-        0
-      );
-
-      $("recordCount").textContent = records;
-    }
-
-
-    /* ========================================================
-       INGESTION
-       ======================================================== */
-
-    function openIngestion() {
-
-      if (!getUser()) {
-        openAuth();
-        currentView = "ingestion";
-        return;
-      }
-
-      renderIngestion();
-    }
-
-    function renderIngestion() {
-
-      currentView = "ingestion";
-
-      hide($("entryScreen"));
-      hide($("workspaceView"));
-      show($("ingestionView"));
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
-
-
-    function simulateUpload(source) {
-
-      if (!getUser()) {
-        openAuth();
-        currentView = "ingestion";
-        return;
-      }
-
-      showToast("Teaching the numbers some manners…");
-
-      setTimeout(() => {
-
-        const data = getData();
-
-        const records =
-          source === "CSV" ? 124 :
-          source === "Excel / XLSX" ? 287 :
-          source === "Google Sheets" ? 93 :
-          source === "PDF" ? 31 :
-          source === "JSON" ? 176 :
-          source === "OCR" ? 42 :
-          source === "Gmail" ? 18 :
-          source === "Google Drive" ? 76 :
-          source === "URL" ? 15 :
-          source === "Manual Entry" ? 1 :
-          source === "API" ? 512 :
-          10;
-
-        data.push({
-          id: Date.now(),
-          source,
-          records,
-          createdAt: new Date().toISOString()
-        });
-
-        saveData(data);
-
-        updateWorkspaceStats();
-
-        showToast("Nice. The numbers have entered the building.");
-
-      }, 850);
-    }
-
-
-    /* ========================================================
-       DATA CONTROLS
-       ======================================================== */
-
-    function resetData() {
-
-      if (!getUser()) {
-        openAuth();
-        return;
-      }
-
-      if (!confirm(
-        "Reset the current demo data and start fresh?"
-      )) {
-        return;
-      }
-
-      localStorage.removeItem(DATA_KEY);
-
-      updateWorkspaceStats();
-
-      showToast("Fresh start. No hard feelings.");
-    }
-
-
-    function deleteData() {
-
-      if (!getUser()) {
-        openAuth();
-        return;
-      }
-
-      if (!confirm(
-        "Delete all demo data? This cannot be undone."
-      )) {
-        return;
-      }
-
-      localStorage.removeItem(DATA_KEY);
-
-      updateWorkspaceStats();
-
-      showToast("Gone. Like it never happened.");
-    }
-
-
-    /* ========================================================
-       GUEST PREVIEW
-       ======================================================== */
-
-    function openGuestPreview() {
-
-      currentView = "workspace";
-
-      hide($("entryScreen"));
-      hide($("ingestionView"));
-      show($("workspaceView"));
-
-      const addButtons =
-        document.querySelectorAll(
-          '#workspaceView button[onclick="openIngestion()"]'
-        );
-
-      addButtons.forEach(button => {
-        button.disabled = true;
-        button.style.opacity = ".45";
-        button.style.cursor = "not-allowed";
-        button.textContent = "Preview Only";
-        button.onclick = function() {
-          showToast(
-            "Guest mode is read-only. No data gets past the front door."
-          );
-        };
-      });
-
-      $("workspaceContent").innerHTML = `
-        <div class="empty-workspace">
-          <div class="empty-icon">◉</div>
-
-          <h2>
-            Guest Preview
-          </h2>
-
-          <p>
-            You are looking at the workspace in read-only mode.
-            Sign in when you are ready to bring your own data.
-          </p>
-
-          <button
-            class="btn btn-primary"
-            onclick="openAuth()"
-          >
-            Sign In to Continue
-          </button>
-        </div>
-      `;
-
-      showToast("Welcome to the quiet side of finance.");
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
+    const views = {
+      selection: $("selectionView"),
+      workspace: $("workspaceView"),
+      ingestion: $("ingestionView"),
+      learn: $("learnView"),
+      auth: $("authView")
+    };
 
 
     /* ========================================================
        TOAST
        ======================================================== */
 
-    let toastTimer;
+    let toastTimer = null;
 
     function showToast(message) {
 
@@ -1828,27 +2567,986 @@
 
       toastTimer = setTimeout(() => {
         toast.classList.remove("show");
-      }, 2600);
+      }, 2800);
     }
 
 
     /* ========================================================
-       INITIALIZATION
+       AUTH STATE
        ======================================================== */
 
-    document.addEventListener("DOMContentLoaded", () => {
+    function loadUser() {
 
-      updateHeader();
+      try {
+
+        const raw =
+          localStorage.getItem("sav3ue_ui_user");
+
+        state.user =
+          raw ? JSON.parse(raw) : null;
+
+      } catch {
+
+        state.user = null;
+      }
+
+      updateAccountUI();
+    }
+
+
+    function saveUser(user) {
+
+      state.user = user;
+
+      localStorage.setItem(
+        "sav3ue_ui_user",
+        JSON.stringify(user)
+      );
+
+      updateAccountUI();
+    }
+
+
+    function clearUser() {
+
+      state.user = null;
+
+      localStorage.removeItem(
+        "sav3ue_ui_user"
+      );
+
+      updateAccountUI();
+    }
+
+
+    function updateAccountUI() {
+
+      if (!state.user) {
+
+        $("accountButton").classList.add("hidden");
+
+        return;
+      }
+
+      $("accountButton").classList.remove("hidden");
+
+      const name =
+        state.user.name || "User";
+
+      const initial =
+        name.charAt(0).toUpperCase();
+
+      $("accountAvatar").textContent = initial;
+      $("accountName").textContent = name;
+
+      $("largeAvatar").textContent = initial;
+      $("profileName").textContent = name;
+      $("profileEmail").textContent =
+        state.user.email || "Connected account";
+    }
+
+
+    /* ========================================================
+       NAVIGATION
+       ======================================================== */
+
+    function navigateTo(viewName, addHistory = true) {
+
+      if (!views[viewName]) {
+        return;
+      }
+
+      const previous =
+        state.currentView;
+
+      if (
+        addHistory &&
+        previous !== viewName &&
+        previous !== "landing"
+      ) {
+        state.history.push(previous);
+      }
+
+      Object.values(views).forEach(view => {
+        view.classList.add("hidden");
+      });
+
+      views[viewName].classList.remove("hidden");
+
+      state.currentView = viewName;
+
+      updateBackButton();
+
+      closeCommandMenu();
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+
+    function updateBackButton() {
+
+      const back =
+        $("backButton");
+
+      const showBack =
+        state.currentView !== "selection" &&
+        state.currentView !== "auth" &&
+        state.currentView !== "landing" &&
+        state.history.length > 0;
+
+      back.classList.toggle(
+        "hidden",
+        !showBack
+      );
+    }
+
+
+    function goBack() {
+
+      if (!state.history.length) {
+
+        navigateTo(
+          "selection",
+          false
+        );
+
+        return;
+      }
+
+      const previous =
+        state.history.pop();
+
+      navigateTo(
+        previous,
+        false
+      );
+    }
+
+
+    function enterApplication() {
+
+      $("landingScreen").classList.add("hidden");
+
+      $("appShell").classList.remove("hidden");
+
+      state.history = [];
+
+      navigateTo(
+        "selection",
+        false
+      );
+    }
+
+
+    function returnToLanding() {
+
+      $("appShell").classList.add("hidden");
+
+      $("landingScreen").classList.remove("hidden");
+
+      state.currentView = "landing";
+      state.history = [];
+
+      updateBackButton();
+    }
+
+
+    /* ========================================================
+       LANDING ACTIONS
+       ======================================================== */
+
+    function startApp() {
+      enterApplication();
+    }
+
+
+    /* ========================================================
+       AUTH GATE
+       ======================================================== */
+
+    function requireAuthentication(
+      targetView
+    ) {
+
+      if (state.user) {
+
+        navigateTo(targetView);
+
+        return true;
+      }
+
+      state.pendingView =
+        targetView;
+
+      navigateTo(
+        "auth"
+      );
+
+      return false;
+    }
+
+
+    function requestWorkspace() {
+
+      state.guestMode = false;
+
+      requireAuthentication(
+        "workspace"
+      );
+    }
+
+
+    function requestIngestion() {
+
+      state.guestMode = false;
+
+      requireAuthentication(
+        "ingestion"
+      );
+    }
+
+
+    /* ========================================================
+       AUTH
+       ======================================================== */
+
+    function simulateAuth(type) {
 
       /*
-       * Keep landing locked as the first screen.
-       * User explicitly enters the application via Get Started.
+       * Temporary UI session only.
+       * This will be replaced by Supabase Auth.
        */
 
-      show($("landing"));
-      hide($("app"));
+      const user = {
+        name:
+          type === "signup"
+            ? "New User"
+            : "Bos",
 
-    });
+        email:
+          type === "signup"
+            ? "new.user@example.com"
+            : "user@example.com"
+      };
+
+      saveUser(user);
+
+      const destination =
+        state.pendingView ||
+        "workspace";
+
+      state.pendingView = null;
+
+      state.history = [];
+
+      showToast(
+        type === "signup"
+          ? "Welcome aboard. The numbers have a new colleague."
+          : "Welcome back. Let’s see what the numbers are saying."
+      );
+
+      navigateTo(
+        destination,
+        false
+      );
+    }
+
+
+    function signOut() {
+
+      clearUser();
+
+      state.guestMode = false;
+
+      closeAccount();
+
+      state.history = [];
+
+      navigateTo(
+        "selection",
+        false
+      );
+
+      showToast(
+        "Signed out. The numbers can breathe again."
+      );
+    }
+
+
+    /* ========================================================
+       GUEST PREVIEW
+       ======================================================== */
+
+    function openGuestPreview() {
+
+      state.guestMode = true;
+
+      state.history = [];
+
+      navigateTo(
+        "workspace",
+        false
+      );
+
+      renderGuestWorkspace();
+
+      showToast(
+        "Welcome to the quiet side. Look around — hands off the data."
+      );
+    }
+
+
+    function renderGuestWorkspace() {
+
+      $("guestBanner")
+        .classList.remove("hidden");
+
+      $("workspaceMainContent").innerHTML = `
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            ◉
+          </div>
+
+          <h2>
+            Guest Preview
+          </h2>
+
+          <p>
+            You can explore the workspace in read-only mode.
+            Data ingestion, reset, delete, and decision actions
+            remain behind the gate.
+          </p>
+
+          <button
+            class="btn btn-primary"
+            onclick="requestWorkspace()"
+          >
+            Sign In to Continue
+          </button>
+
+        </div>
+      `;
+    }
+
+
+    function renderAuthenticatedWorkspace() {
+
+      $("guestBanner")
+        .classList.add("hidden");
+
+      $("workspaceMainContent").innerHTML = `
+        <div class="overview">
+
+          <div class="overview-question">
+            What needs your attention?
+          </div>
+
+          <h2 class="overview-title">
+            Your financial picture starts here.
+          </h2>
+
+          <p class="overview-copy">
+            Once data is connected, SAV3UE will organize the evidence,
+            validate what it can, calculate deterministically,
+            and surface what deserves human attention.
+          </p>
+
+          <div class="metric-grid">
+
+            <div class="metric">
+              <div class="metric-label">
+                Data Sources
+              </div>
+
+              <div
+                id="metricSources"
+                class="metric-value"
+              >
+                ${state.dataSources}
+              </div>
+            </div>
+
+            <div class="metric">
+              <div class="metric-label">
+                Records
+              </div>
+
+              <div
+                id="metricRecords"
+                class="metric-value"
+              >
+                ${state.records}
+              </div>
+            </div>
+
+            <div class="metric">
+              <div class="metric-label">
+                Evidence
+              </div>
+
+              <div class="metric-value">
+                Traceable
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+      updateWorkspaceStats();
+    }
+
+
+    /* ========================================================
+       WORKSPACE
+       ======================================================== */
+
+    function openWorkspaceView() {
+
+      navigateTo(
+        "workspace"
+      );
+
+      if (state.guestMode) {
+        renderGuestWorkspace();
+      } else {
+        renderAuthenticatedWorkspace();
+      }
+    }
+
+
+    /* ========================================================
+       INGESTION
+       ======================================================== */
+
+    function requestSource(source) {
+
+      if (state.guestMode) {
+
+        showToast(
+          "Nice try, Guest. The data door is still locked."
+        );
+
+        return;
+      }
+
+      /*
+       * Human Gate appears before consequential
+       * ingestion / connection actions.
+       */
+
+      state.pendingAction = {
+        type: "source",
+        source
+      };
+
+      openHumanGate(
+        `You are about to connect ${source}.
+        Review the source and make sure you have the right
+        authority and evidence before continuing.`
+      );
+    }
+
+
+    /* ========================================================
+       HUMAN GATE
+       ======================================================== */
+
+    function openHumanGate(
+      description
+    ) {
+
+      $("gateDescription").textContent =
+        description;
+
+      $("gateLayer")
+        .classList.remove("hidden");
+    }
+
+
+    function closeGate() {
+
+      $("gateLayer")
+        .classList.add("hidden");
+
+      state.pendingAction = null;
+    }
+
+
+    function approveGate() {
+
+      const action =
+        state.pendingAction;
+
+      $("gateLayer")
+        .classList.add("hidden");
+
+      state.pendingAction = null;
+
+      if (!action) {
+        return;
+      }
+
+      if (action.type === "source") {
+
+        showToast(
+          `${action.source} is ready for the Supabase ingestion connection.`
+        );
+
+        /*
+         * No fake upload.
+         * Real connector will be wired to Supabase next.
+         */
+
+        return;
+      }
+
+      if (action.type === "command") {
+
+        showToast(
+          "Human gate passed. The next step belongs to the real engine."
+        );
+
+        return;
+      }
+
+      if (action.type === "reset") {
+
+        performReset();
+
+        return;
+      }
+
+      if (action.type === "delete") {
+
+        performDelete();
+
+        return;
+      }
+    }
+
+
+    /* ========================================================
+       RESET / DELETE
+       ======================================================== */
+
+    function requestReset() {
+
+      if (state.guestMode) {
+
+        showToast(
+          "Guest mode gets the tour, not the reset button."
+        );
+
+        return;
+      }
+
+      state.pendingAction = {
+        type: "reset"
+      };
+
+      openHumanGate(
+        "Reset removes the current workspace data state.
+        Review what you are about to reset before continuing."
+      );
+    }
+
+
+    function performReset() {
+
+      state.dataSources = 0;
+      state.records = 0;
+
+      updateWorkspaceStats();
+
+      showToast(
+        "Fresh start. No hard feelings."
+      );
+    }
+
+
+    function requestDelete() {
+
+      if (state.guestMode) {
+
+        showToast(
+          "Guest mode gets the tour, not the delete button."
+        );
+
+        return;
+      }
+
+      state.pendingAction = {
+        type: "delete"
+      };
+
+      openHumanGate(
+        "Delete is destructive.
+        Make sure the evidence is no longer needed
+        before continuing."
+      );
+    }
+
+
+    function performDelete() {
+
+      state.dataSources = 0;
+      state.records = 0;
+
+      updateWorkspaceStats();
+
+      showToast(
+        "Gone. Like it never happened."
+      );
+    }
+
+
+    /* ========================================================
+       COMMAND BAR
+       ======================================================== */
+
+    function toggleCommandMenu() {
+
+      if (state.guestMode) {
+
+        showToast(
+          "Guest Preview is read-only. The command room is closed for now."
+        );
+
+        return;
+      }
+
+      const menu =
+        $("commandMenu");
+
+      const isHidden =
+        menu.classList.contains("hidden");
+
+      menu.classList.toggle(
+        "hidden",
+        !isHidden
+      );
+
+      $("commandBar")
+        .setAttribute(
+          "aria-expanded",
+          String(isHidden)
+        );
+    }
+
+
+    function closeCommandMenu() {
+
+      $("commandMenu")
+        .classList.add("hidden");
+
+      $("commandBar")
+        .setAttribute(
+          "aria-expanded",
+          "false"
+        );
+    }
+
+
+    function commandAction(action) {
+
+      closeCommandMenu();
+
+      const messages = {
+        review:
+          "Review means understanding what changed before deciding what to do.",
+
+        anomaly:
+          "Nothing weird here — yet. Real anomaly detection will run through the Core Engine.",
+
+        tax:
+          "Tax review will use versioned rules and deterministic calculations.",
+
+        unresolved:
+          "Unresolved evidence belongs in the Human Gate — not under the rug.",
+
+        activity:
+          "Activity will show the evidence, actions, calculations, and trace history."
+      };
+
+      state.pendingAction = {
+        type: "command",
+        action
+      };
+
+      openHumanGate(
+        messages[action] ||
+        "Review the context before continuing."
+      );
+    }
+
+
+    /* ========================================================
+       WORKSPACE STATS
+       ======================================================== */
+
+    function updateWorkspaceStats() {
+
+      $("statusSources").textContent =
+        state.dataSources;
+
+      $("statusRecords").textContent =
+        state.records;
+
+      const sourceMetric =
+        $("metricSources");
+
+      const recordMetric =
+        $("metricRecords");
+
+      if (sourceMetric) {
+        sourceMetric.textContent =
+          state.dataSources;
+      }
+
+      if (recordMetric) {
+        recordMetric.textContent =
+          state.records;
+      }
+    }
+
+
+    /* ========================================================
+       ACCOUNT
+       ======================================================== */
+
+    function openAccount() {
+
+      if (!state.user) {
+        return;
+      }
+
+      $("accountLayer")
+        .classList.remove("hidden");
+    }
+
+
+    function closeAccount() {
+
+      $("accountLayer")
+        .classList.add("hidden");
+    }
+
+
+    function closeAccountOutside(event) {
+
+      if (
+        event.target ===
+        $("accountLayer")
+      ) {
+        closeAccount();
+      }
+    }
+
+
+    /* ========================================================
+       KEYBOARD
+       ======================================================== */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          closeCommandMenu();
+          closeAccount();
+          closeGate();
+
+          return;
+        }
+
+        /*
+         * Command bar shortcut.
+         */
+
+        if (
+          (event.ctrlKey ||
+           event.metaKey) &&
+          event.key.toLowerCase() === "k"
+        ) {
+
+          event.preventDefault();
+
+          if (
+            state.currentView ===
+            "workspace"
+          ) {
+            toggleCommandMenu();
+          }
+        }
+      }
+    );
+
+
+    /* ========================================================
+       BOOT
+       ======================================================== */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        loadUser();
+
+        /*
+         * Landing is always the first screen.
+         */
+
+        $("landingScreen")
+          .classList.remove("hidden");
+
+        $("appShell")
+          .classList.add("hidden");
+
+        /*
+         * Wire Get Started explicitly.
+         */
+
+        document
+          .querySelector(
+            '#landingScreen button[onclick="navigateTo(\'selection\')"]'
+          )
+          ?.addEventListener(
+            "click",
+            startApp
+          );
+
+        /*
+         * The inline navigation remains the
+         * visible behavior; this listener simply
+         * guarantees the application shell opens.
+         */
+
+        const getStarted =
+          $("landingScreen")
+            .querySelector(".btn-primary");
+
+        if (getStarted) {
+
+          getStarted.onclick =
+            startApp;
+        }
+      }
+    );
+
+
+    /* ========================================================
+       NAVIGATION PATCH
+       ======================================================== */
+
+    /*
+     * When the app shell is first entered,
+     * selection is shown.
+     */
+
+    function startApp() {
+
+      $("landingScreen")
+        .classList.add("hidden");
+
+      $("appShell")
+        .classList.remove("hidden");
+
+      state.history = [];
+      state.guestMode = false;
+
+      navigateTo(
+        "selection",
+        false
+      );
+    }
+
+
+    /*
+     * Learn More is intentionally a real page,
+     * not a toast.
+     */
+
+    function openLearnMore() {
+
+      $("landingScreen")
+        .classList.add("hidden");
+
+      $("appShell")
+        .classList.remove("hidden");
+
+      state.history = [];
+
+      navigateTo(
+        "learn",
+        false
+      );
+    }
+
+
+    /*
+     * Preserve the landing button behavior.
+     */
+
+    const originalNavigateTo =
+      navigateTo;
+
+    navigateTo = function(
+      viewName,
+      addHistory = true
+    ) {
+
+      if (
+        viewName === "selection"
+      ) {
+
+        $("landingScreen")
+          .classList.add("hidden");
+
+        $("appShell")
+          .classList.remove("hidden");
+      }
+
+      if (
+        viewName === "learn"
+      ) {
+
+        $("landingScreen")
+          .classList.add("hidden");
+
+        $("appShell")
+          .classList.remove("hidden");
+      }
+
+      originalNavigateTo(
+        viewName,
+        addHistory
+      );
+    };
+
+
+    /*
+     * Landing Learn More button.
+     */
+
+    const learnButton =
+      $("landingScreen")
+        .querySelector(".btn-secondary");
+
+    if (learnButton) {
+
+      learnButton.onclick =
+        openLearnMore;
+    }
+
   </script>
 
 </body>
