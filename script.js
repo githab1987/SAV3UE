@@ -37,6 +37,10 @@ function IconX() {
   return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 }
 
+function IconMenu() {
+  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
+}
+
 // ============= LOGO =============
 function Logo({ size = 40 }) {
   return (
@@ -46,8 +50,15 @@ function Logo({ size = 40 }) {
           <stop offset="0%" stopColor="#14b8a6" />
           <stop offset="100%" stopColor="#0891b2" />
         </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
       </defs>
-      <rect width="48" height="48" rx="12" fill="url(#logoGrad)" opacity="0.15" stroke="url(#logoGrad)" strokeWidth="2"/>
+      <rect width="48" height="48" rx="12" fill="url(#logoGrad)" opacity="0.15" stroke="url(#logoGrad)" strokeWidth="2" filter="url(#glow)"/>
       <rect x="12" y="16" width="24" height="4" rx="2" fill="url(#logoGrad)" />
       <path d="M12 30.5h14.5L36 20" stroke="url(#logoGrad)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -64,61 +75,92 @@ function LandingPage({ onGetStarted }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-cyan-50 flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
+      
+      {/* Animated Background Orbs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-200 to-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-cyan-200 to-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
+      <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-gradient-to-br from-blue-200 to-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+      
+      <style>{`
+        @keyframes blob {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
+
       <div 
-        className="flex flex-col items-center text-center max-w-2xl"
+        className="flex flex-col items-center text-center max-w-2xl relative z-10"
         style={{
           opacity: isLoaded ? 1 : 0,
           transform: isLoaded ? "translateY(0)" : "translateY(20px)",
           transition: "all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)"
         }}
       >
-        {/* Logo + Name */}
+        {/* Logo */}
         <div className="mb-8 inline-block">
-          <Logo size={64} />
+          <Logo size={72} />
         </div>
 
-        <h1 className="text-5xl sm:text-6xl font-800 tracking-tight text-slate-900 mb-4">
+        {/* Main Title */}
+        <h1 className="text-6xl sm:text-7xl font-black tracking-tight bg-gradient-to-r from-slate-900 via-teal-700 to-cyan-600 bg-clip-text text-transparent mb-4">
           Special Ali
         </h1>
 
-        {/* Tagline */}
-        <p className="text-xl sm:text-2xl text-slate-600 font-medium mb-2">
-          Rekan kerja akuntansi yang teliti dan bisa dipercaya.
+        {/* Taglines */}
+        <p className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+          Your Trusted Accounting Partner
         </p>
 
-        <p className="text-base text-slate-500 max-w-lg leading-relaxed mb-10">
-          Audit keuangan & pajak otomatis berbasis PSAK & DJP. Zero-compromise accounting untuk bisnis Indonesia yang berkembang.
+        <p className="text-lg text-slate-600 max-w-lg leading-relaxed mb-10">
+          Automated financial audit & tax compliance based on PSAK & DJP standards. Zero-compromise accounting for growing Indonesian businesses.
         </p>
 
         {/* Features Pills */}
         <div className="flex flex-wrap justify-center gap-3 mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 border border-teal-200 rounded-full">
-            <IconCheck />
-            <span className="text-sm font-medium text-teal-700">PSAK Native</span>
-          </div>
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-50 border border-cyan-200 rounded-full">
-            <IconCheck />
-            <span className="text-sm font-medium text-cyan-700">DJP Ready</span>
-          </div>
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-full">
-            <IconCheck />
-            <span className="text-sm font-medium text-emerald-700">Zero-Approx</span>
-          </div>
+          {[
+            { label: "PSAK Native", color: "from-teal-400 to-teal-600" },
+            { label: "DJP Ready", color: "from-cyan-400 to-cyan-600" },
+            { label: "Zero-Approx", color: "from-blue-400 to-cyan-500" },
+          ].map((feature, i) => (
+            <div 
+              key={i}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r ${feature.color} text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all hover:scale-105`}
+              style={{
+                opacity: isLoaded ? 1 : 0,
+                transform: isLoaded ? "translateY(0)" : "translateY(10px)",
+                transition: `all 0.6s ease-out ${i * 100}ms`
+              }}
+            >
+              <IconCheck />
+              <span>{feature.label}</span>
+            </div>
+          ))}
         </div>
 
         {/* CTA Button */}
         <button 
           onClick={onGetStarted}
-          className="group inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-semibold rounded-xl shadow-lg shadow-teal-200 hover:shadow-xl hover:shadow-teal-300 hover:scale-105 transition-all active:scale-95"
+          className="group relative inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold rounded-xl shadow-xl shadow-teal-300/40 hover:shadow-2xl hover:shadow-teal-400/50 hover:scale-105 transition-all active:scale-95 text-lg"
         >
-          <span>Mulai Audit</span>
+          <span>Start Audit</span>
           <IconArrowRight />
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white to-cyan-100 opacity-0 group-hover:opacity-20 transition-opacity" />
         </button>
 
         {/* Footer */}
-        <p className="mt-12 text-xs text-slate-400">
-          Enterprise Edition • SPECIAL ALI v3.0-UE • Production Ready
+        <p className="mt-12 text-xs text-slate-400 font-semibold tracking-wide">
+          ENTERPRISE EDITION • SPECIAL ALI v3.0-UE • PRODUCTION READY
         </p>
       </div>
     </div>
@@ -127,7 +169,7 @@ function LandingPage({ onGetStarted }) {
 
 // ============= AUTH MODAL =============
 function AuthModal({ onClose, onSuccess }) {
-  const [mode, setMode] = useState("signin"); // "signin" or "signup"
+  const [mode, setMode] = useState("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -138,71 +180,77 @@ function AuthModal({ onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 border border-slate-100">
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4 backdrop-blur-md">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 border border-white/20 relative overflow-hidden">
         
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <Logo size={32} />
-            <span className="text-sm font-semibold text-slate-900">Special Ali</span>
+        {/* Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-50 to-cyan-50 opacity-50" />
+        <div className="relative z-10">
+
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Logo size={32} />
+              <span className="text-sm font-bold text-slate-900">Special Ali</span>
+            </div>
+            <button 
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-600 transition-colors hover:bg-slate-100 p-1.5 rounded-lg"
+            >
+              <IconX />
+            </button>
           </div>
-          <button 
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+
+          {/* Title */}
+          <h2 className="text-2xl font-black text-slate-900 mb-1">
+            {mode === "signin" ? "Welcome Back" : "Create Account"}
+          </h2>
+          <p className="text-sm text-slate-600 mb-6">
+            {mode === "signin" ? "Access your audit workspace" : "Start auditing with PSAK compliance"}
+          </p>
+
+          {/* Form */}
+          <div className="space-y-4 mb-6">
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+              <input 
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all shadow-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Password</label>
+              <input 
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all shadow-sm"
+              />
+            </div>
+          </div>
+
+          {/* Button */}
+          <button
+            onClick={handleSubmit}
+            disabled={!email || !password}
+            className="w-full px-4 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
           >
-            <IconX />
+            {mode === "signin" ? "Sign In" : "Create Account"}
           </button>
+
+          {/* Toggle Mode */}
+          <button
+            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+            className="w-full mt-4 text-sm text-slate-600 hover:text-teal-600 transition-colors font-semibold"
+          >
+            {mode === "signin" ? "Don't have account? Sign up" : "Already have account? Sign in"}
+          </button>
+
         </div>
-
-        {/* Title */}
-        <h2 className="text-2xl font-bold text-slate-900 mb-1">
-          {mode === "signin" ? "Masuk" : "Buat Akun"}
-        </h2>
-        <p className="text-sm text-slate-500 mb-6">
-          {mode === "signin" ? "Akses workspace audit Anda" : "Mulai dengan akun baru"}
-        </p>
-
-        {/* Form */}
-        <div className="space-y-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
-            <input 
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@perusahaan.com"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-colors"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Kata Sandi</label>
-            <input 
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-colors"
-            />
-          </div>
-        </div>
-
-        {/* Button */}
-        <button
-          onClick={handleSubmit}
-          disabled={!email || !password}
-          className="w-full px-4 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {mode === "signin" ? "Masuk" : "Daftar"}
-        </button>
-
-        {/* Toggle Mode */}
-        <button
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="w-full mt-4 text-sm text-slate-600 hover:text-teal-600 transition-colors font-medium"
-        >
-          {mode === "signin" ? "Belum punya akun? Daftar di sini" : "Sudah punya akun? Masuk di sini"}
-        </button>
       </div>
     </div>
   );
@@ -227,9 +275,13 @@ function SelectionScreen({ isGuest, onSelectWorkspace, onSelectIngestion, onShow
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-cyan-50 flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
+      
+      {/* Background Blobs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-200 to-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+      
       <div 
-        className="flex flex-col items-center text-center w-full"
+        className="flex flex-col items-center text-center w-full relative z-10"
         style={{
           opacity: isLoaded ? 1 : 0,
           transform: isLoaded ? "translateY(0)" : "translateY(20px)",
@@ -238,10 +290,10 @@ function SelectionScreen({ isGuest, onSelectWorkspace, onSelectIngestion, onShow
       >
         {/* Header */}
         <div className="mb-12">
-          <h2 className="text-3xl sm:text-4xl font-800 text-slate-900 mb-2">
-            Pilih Mode Kerja
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mb-2">
+            Choose Your Mode
           </h2>
-          <p className="text-slate-500">Lanjutkan dengan audit atau masukkan data baru</p>
+          <p className="text-slate-600 text-lg">Continue audit or import new data</p>
         </div>
 
         {/* Cards Grid */}
@@ -252,25 +304,25 @@ function SelectionScreen({ isGuest, onSelectWorkspace, onSelectIngestion, onShow
             onClick={() => handleCardClick("workspace")}
             onMouseEnter={() => setHoveredCard("workspace")}
             onMouseLeave={() => setHoveredCard(null)}
-            className={`cursor-pointer group p-8 rounded-2xl border-2 transition-all duration-300 ${
+            className={`cursor-pointer group p-8 rounded-2xl border-2 transition-all duration-300 backdrop-blur-sm ${
               hoveredCard === "workspace" 
-                ? "bg-teal-50 border-teal-300 shadow-lg" 
-                : "bg-white border-slate-200 hover:border-teal-200"
+                ? "bg-gradient-to-br from-teal-50 to-cyan-50 border-teal-300 shadow-2xl shadow-teal-200/50" 
+                : "bg-white/80 border-slate-200 hover:border-teal-200 shadow-lg hover:shadow-xl"
             }`}
           >
-            <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center transition-colors ${
+            <div className={`w-14 h-14 rounded-xl mb-4 flex items-center justify-center transition-all ${
               hoveredCard === "workspace"
-                ? "bg-teal-600 text-white"
-                : "bg-teal-100 text-teal-600"
+                ? "bg-gradient-to-br from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-200/50"
+                : "bg-gradient-to-br from-teal-100 to-cyan-100 text-teal-700"
             }`}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Workspace</h3>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Lanjutkan audit yang sudah dimulai, lihat hasil, dan kelola jurnal penyesuaian.
+            <h3 className="text-2xl font-black text-slate-900 mb-2">Workspace</h3>
+            <p className="text-slate-600 leading-relaxed text-sm">
+              Continue your audits, review results, and manage adjusting entries.
             </p>
-            <div className="mt-4 flex items-center justify-center text-sm font-semibold text-teal-600 group-hover:gap-2 transition-all gap-1">
-              <span>Masuk</span>
+            <div className="mt-4 flex items-center justify-center text-sm font-bold text-teal-600 group-hover:gap-2 transition-all gap-1">
+              <span>Access</span>
               <IconArrowRight />
             </div>
           </div>
@@ -280,25 +332,25 @@ function SelectionScreen({ isGuest, onSelectWorkspace, onSelectIngestion, onShow
             onClick={() => handleCardClick("ingestion")}
             onMouseEnter={() => setHoveredCard("ingestion")}
             onMouseLeave={() => setHoveredCard(null)}
-            className={`cursor-pointer group p-8 rounded-2xl border-2 transition-all duration-300 ${
+            className={`cursor-pointer group p-8 rounded-2xl border-2 transition-all duration-300 backdrop-blur-sm ${
               hoveredCard === "ingestion" 
-                ? "bg-cyan-50 border-cyan-300 shadow-lg" 
-                : "bg-white border-slate-200 hover:border-cyan-200"
+                ? "bg-gradient-to-br from-cyan-50 to-blue-50 border-cyan-300 shadow-2xl shadow-cyan-200/50" 
+                : "bg-white/80 border-slate-200 hover:border-cyan-200 shadow-lg hover:shadow-xl"
             }`}
           >
-            <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center transition-colors ${
+            <div className={`w-14 h-14 rounded-xl mb-4 flex items-center justify-center transition-all ${
               hoveredCard === "ingestion"
-                ? "bg-cyan-600 text-white"
-                : "bg-cyan-100 text-cyan-600"
+                ? "bg-gradient-to-br from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-200/50"
+                : "bg-gradient-to-br from-cyan-100 to-blue-100 text-cyan-700"
             }`}>
               <IconUpload />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Ingestion Data</h3>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Masukkan dokumen baru: CSV, Excel, PDF, foto nota, atau sumber eksternal.
+            <h3 className="text-2xl font-black text-slate-900 mb-2">Ingestion</h3>
+            <p className="text-slate-600 leading-relaxed text-sm">
+              Import documents: CSV, Excel, PDF, receipts, or connect external data sources.
             </p>
-            <div className="mt-4 flex items-center justify-center text-sm font-semibold text-cyan-600 group-hover:gap-2 transition-all gap-1">
-              <span>Mulai</span>
+            <div className="mt-4 flex items-center justify-center text-sm font-bold text-cyan-600 group-hover:gap-2 transition-all gap-1">
+              <span>Start</span>
               <IconArrowRight />
             </div>
           </div>
@@ -307,9 +359,9 @@ function SelectionScreen({ isGuest, onSelectWorkspace, onSelectIngestion, onShow
 
         {/* Guest Badge */}
         {isGuest && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full">
-            <div className="w-2 h-2 rounded-full bg-amber-500" />
-            <span className="text-xs font-medium text-amber-700">Mode Tamu • Login untuk akses penuh</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-full shadow-sm">
+            <div className="w-2 h-2 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 animate-pulse" />
+            <span className="text-xs font-bold text-amber-700">Guest Mode • Sign in for full access</span>
           </div>
         )}
       </div>
@@ -327,29 +379,22 @@ function IngestionScreen({ onBack }) {
   }, []);
 
   const sources = [
-    { key: "local", label: "File Lokal / OCR", icon: IconUpload, color: "teal", formats: "CSV • XLSX • PDF • JSON • Foto" },
-    { key: "gmail", label: "Gmail", icon: IconMail, color: "red", formats: "Lampiran email" },
-    { key: "gdrive", label: "Google Drive", icon: IconDrive, color: "blue", formats: "Folder tersambung" },
-    { key: "url", label: "URL", icon: IconLink, color: "purple", formats: "Tautan dokumen" },
+    { key: "local", label: "Local Files / OCR", icon: IconUpload, color: "from-teal-400 to-teal-600", bgColor: "from-teal-50 to-cyan-50", formats: "CSV • XLSX • PDF • JSON • Photos" },
+    { key: "gmail", label: "Gmail", icon: IconMail, color: "from-red-400 to-pink-600", bgColor: "from-red-50 to-pink-50", formats: "Email attachments" },
+    { key: "gdrive", label: "Google Drive", icon: IconDrive, color: "from-blue-400 to-blue-600", bgColor: "from-blue-50 to-cyan-50", formats: "Connected folders" },
+    { key: "url", label: "URL", icon: IconLink, color: "from-purple-400 to-purple-600", bgColor: "from-purple-50 to-pink-50", formats: "Document links" },
   ];
 
-  const colorClasses = {
-    teal: "bg-teal-50 border-teal-200 text-teal-700 hover:border-teal-400",
-    red: "bg-red-50 border-red-200 text-red-700 hover:border-red-400",
-    blue: "bg-blue-50 border-blue-200 text-blue-700 hover:border-blue-400",
-    purple: "bg-purple-50 border-purple-200 text-purple-700 hover:border-purple-400",
-  };
-
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-cyan-50 flex flex-col">
       
       {/* Header */}
-      <div className="border-b border-slate-100 px-6 py-4">
+      <div className="border-b border-slate-200 px-6 py-4 bg-white/80 backdrop-blur-sm sticky top-0 z-20">
         <button 
           onClick={onBack}
-          className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors inline-flex items-center gap-2"
+          className="text-sm font-bold text-slate-700 hover:text-slate-900 transition-colors inline-flex items-center gap-2 hover:bg-slate-100 px-3 py-2 rounded-lg"
         >
-          ← Kembali
+          ← Back
         </button>
       </div>
 
@@ -365,11 +410,11 @@ function IngestionScreen({ onBack }) {
         >
           
           {/* Title */}
-          <h2 className="text-3xl font-800 text-slate-900 text-center mb-2">
-            Ingestion Data
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 text-center mb-2">
+            Data Ingestion
           </h2>
-          <p className="text-slate-500 text-center mb-10">
-            Pilih sumber dokumen untuk audit Anda
+          <p className="text-slate-600 text-center text-lg mb-10">
+            Select your document source to start audit
           </p>
 
           {/* Sources Grid */}
@@ -379,20 +424,15 @@ function IngestionScreen({ onBack }) {
               return (
                 <div 
                   key={source.key}
-                  className={`p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-md ${colorClasses[source.color]}`}
+                  className={`p-6 rounded-2xl border-2 border-slate-200 cursor-pointer transition-all hover:shadow-xl bg-gradient-to-br ${source.bgColor} hover:border-slate-300 group`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      source.color === "teal" ? "bg-teal-600 text-white" :
-                      source.color === "red" ? "bg-red-600 text-white" :
-                      source.color === "blue" ? "bg-blue-600 text-white" :
-                      "bg-purple-600 text-white"
-                    }`}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br ${source.color} text-white shadow-lg group-hover:scale-110 transition-all`}>
                       <Icon />
                     </div>
                     <div className="flex-1 text-left">
-                      <h3 className="font-semibold text-slate-900 mb-1">{source.label}</h3>
-                      <p className="text-xs text-slate-600">{source.formats}</p>
+                      <h3 className="font-bold text-slate-900 mb-1 text-lg">{source.label}</h3>
+                      <p className="text-xs text-slate-600 font-semibold">{source.formats}</p>
                     </div>
                   </div>
                 </div>
@@ -402,13 +442,13 @@ function IngestionScreen({ onBack }) {
 
           {/* Action Buttons */}
           <div className="flex gap-3 justify-center flex-wrap">
-            <button className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors text-sm">
+            <button className="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-sm shadow-sm">
               <IconRotate />
               Reset Data
             </button>
-            <button className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 font-medium rounded-lg hover:bg-red-100 transition-colors text-sm border border-red-200">
+            <button className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 text-red-700 font-bold rounded-lg hover:border-red-300 transition-all text-sm shadow-sm">
               <IconTrash />
-              Hapus Data
+              Delete Data
             </button>
           </div>
 
@@ -428,29 +468,56 @@ function WorkspaceScreen({ onBack }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-cyan-50 flex flex-col items-center justify-center px-6 relative overflow-hidden">
+      
+      {/* Background Blobs */}
+      <div className="absolute inset-0 opacity-40">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-200 to-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-cyan-200 to-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
+      </div>
+
+      <style>{`
+        @keyframes blob {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+      `}</style>
+
       <div 
-        className="text-center"
+        className="text-center relative z-10"
         style={{
           opacity: isLoaded ? 1 : 0,
           transform: isLoaded ? "translateY(0)" : "translateY(20px)",
           transition: "all 0.8s ease-out"
         }}
       >
-        <p className="text-slate-500 text-lg mb-3">Selamat datang,</p>
-        <h1 className="text-5xl sm:text-6xl font-800 text-slate-900 mb-6">
+        <p className="text-slate-500 text-lg mb-3 font-semibold">Welcome,</p>
+        <h1 className="text-6xl sm:text-7xl font-black text-slate-900 mb-6">
           Let's work.
         </h1>
-        <p className="text-slate-400 max-w-md">
-          Workspace Anda siap. Klik di bawah untuk melanjutkan ke dashboard audit.
+        <p className="text-slate-600 max-w-md text-lg mb-8">
+          Your workspace is ready. Click below to access your audit dashboard.
         </p>
         
-        <div className="mt-8">
+        <div className="flex gap-4 justify-center flex-wrap">
           <button 
             onClick={onBack}
-            className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all"
+            className="px-8 py-4 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold rounded-xl hover:shadow-lg shadow-md transition-all hover:scale-105 active:scale-95"
           >
-            Lanjut ke Dashboard →
+            Go to Dashboard →
+          </button>
+          <button 
+            onClick={onBack}
+            className="px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all"
+          >
+            Back
           </button>
         </div>
       </div>
@@ -460,7 +527,7 @@ function WorkspaceScreen({ onBack }) {
 
 // ============= MAIN APP =============
 function App() {
-  const [screen, setScreen] = useState("landing"); // landing, selection, ingestion, workspace, workspace-ready
+  const [screen, setScreen] = useState("landing");
   const [isGuest, setIsGuest] = useState(true);
   const [showAuth, setShowAuth] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
@@ -493,7 +560,7 @@ function App() {
   };
 
   const handleWorkspaceReady = () => {
-    setScreen("workspace-ready");
+    setScreen("dashboard");
   };
 
   return (
@@ -526,18 +593,18 @@ function App() {
         <WorkspaceScreen onBack={handleWorkspaceReady} />
       )}
 
-      {screen === "workspace-ready" && (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      {screen === "dashboard" && (
+        <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-cyan-50 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-slate-500 mb-2">Dashboard siap</p>
-            <h1 className="text-3xl font-bold text-slate-900 mb-6">
-              Ini tempat dashboard akan ditampilkan
+            <p className="text-slate-600 mb-2 font-semibold">Dashboard Ready</p>
+            <h1 className="text-4xl font-black text-slate-900 mb-6">
+              Dashboard will appear here in Step 3
             </h1>
             <button 
               onClick={() => setScreen("selection")}
-              className="px-6 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors"
+              className="px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-bold rounded-lg hover:shadow-lg transition-all"
             >
-              Kembali ke Selection
+              Back to Selection
             </button>
           </div>
         </div>
