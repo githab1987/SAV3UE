@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Special Ali",
@@ -13,6 +12,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
+      <head>
+        <style>{`
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          body {
+            font-family: system-ui, -apple-system, sans-serif;
+          }
+        `}</style>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/tailwind.min.css" rel="stylesheet" />
+      </head>
       <body>{children}</body>
     </html>
   );
