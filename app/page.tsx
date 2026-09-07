@@ -1,18 +1,14 @@
-
-// app/page.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   X, Home, UploadCloud, GitCompareArrows, Scale, FileSpreadsheet,
-  AlertTriangle, Settings, ArrowLeft, CheckCircle2, ChevronRight,
-  Mail, HardDrive, Link2, RefreshCw, Trash2, RotateCcw, FileText,
-  Image as ImageIcon, FileJson, BatteryCharging, LayoutGrid, LogOut,
+  AlertTriangle, Settings, CheckCircle2, ChevronRight,
+  Mail, HardDrive, Link2, BatteryCharging, LayoutGrid,
 } from "lucide-react";
 
-/* LOGO — "=" (Debit=Kredit) dengan ujung memanjang jadi centang */
 function Logo({ size = 22, tone = "light" }) {
-  const stroke = tone === "light" ? "#2dd4bf" : "white"; // teal-400 on dark, white on teal chip
+  const stroke = tone === "light" ? "#2dd4bf" : "white";
   const bg = tone === "light" ? "transparent" : "#0f766e";
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
@@ -23,46 +19,43 @@ function Logo({ size = 22, tone = "light" }) {
   );
 }
 
-// ... [PASTE SEMUA KOMPONEN LAIN DI SINI] ...
-
-// Main App
-export default function App() {
-  const [screen, setScreen] = useState("home");
-  const [auth, setAuth] = useState(null);
-  const [toast, setToast] = useState(null);
-  const [confirmModal, setConfirmModal] = useState({ open: false });
-  const [fading, setFading] = useState(false);
-
-  const handleStartClick = () => {
-    setFading(true);
-    setTimeout(() => {
-      setScreen("auth");
-      setFading(false);
-    }, 300);
-  };
-
-  const fireToast = (type) => {
-    const messages = {
-      success: "Beres — debit dan kredit akur.",
-      approve: "Jurnal disetujui, catat di buku besar!",
-      refresh: "Menjalankan ulang audit…",
-      reset: "Data contoh dikembalikan seperti semula.",
-      delete: "Data terhapus. Tidak ada jalan kembali.",
-    };
-    setToast({ type, message: messages[type] });
-    setTimeout(() => setToast(null), 2500);
-  };
-
-  if (screen === "home") return <HomeScreen onStart={handleStartClick} />;
-  if (screen === "auth") return <AuthModal mode="signin" onClose={() => setScreen("home")} onSuccess={() => { setAuth("user@example.com"); setScreen("select"); }} onSwitch={() => {}} />;
-  if (screen === "select") return <SelectScreen onPick={(k) => { setFading(true); setTimeout(() => { setScreen(k === "workspace" ? "workspace" : "ingestion"); setFading(false); }, 300); }} fading={fading} />;
-
+function HomeScreen({ onStart }) {
+  const [in_, setIn] = useState(false);
+  useEffect(() => { 
+    const t = setTimeout(() => setIn(true), 80); 
+    return () => clearTimeout(t); 
+  }, []);
+  
   return (
-    <div className="min-h-screen bg-white">
-      <Toast toast={toast} onClose={() => setToast(null)} />
-      <div className="p-6">
-        <p>Screen aktif: {screen}</p>
+    <div className="h-screen bg-slate-950 flex flex-col items-center justify-center px-6 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-40" style={{ background: "radial-gradient(600px circle at 50% 40%, rgba(45,212,191,0.12), transparent 70%)" }} />
+      <div className="relative transition-all duration-700 ease-out flex flex-col items-center text-center"
+        style={{ opacity: in_ ? 1 : 0, transform: in_ ? "translateY(0)" : "translateY(12px)" }}>
+        <Logo size={40} tone="light" />
+        <h1 className="mt-5 text-3xl sm:text-4xl font-medium tracking-tight text-white">Special Ali</h1>
+        <p className="mt-3 text-slate-400 text-base max-w-xs">Rekan kerja akuntansi yang teliti dan bisa dipercaya.</p>
+        <button onClick={onStart} className="mt-9 bg-teal-500 text-slate-950 font-medium px-7 py-2.5 rounded-full hover:bg-teal-400 transition-colors">
+          Get Started
+        </button>
       </div>
+    </div>
+  );
+}
+
+export default function Page() {
+  const [start, setStart] = useState(false);
+  
+  return (
+    <div className="font-sans">
+      {start ? (
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-slate-500">Loading workspace...</p>
+          </div>
+        </div>
+      ) : (
+        <HomeScreen onStart={() => setStart(true)} />
+      )}
     </div>
   );
 }
