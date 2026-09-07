@@ -1,36 +1,3305 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Special Ali - Audit Keuangan & Pajak Indonesia</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/tailwind.min.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <title>SAV3UE — Financial Intelligence Workspace</title>
+
+  <meta
+    name="description"
+    content="SAV3UE turns financial data into structured, traceable intelligence."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap"
+    rel="stylesheet"
+  />
+
   <style>
+    :root {
+      --bg: #f7f7f4;
+      --surface: #ffffff;
+      --surface-soft: #f1f1ed;
+      --text: #191a18;
+      --muted: #74766f;
+      --border: #dedfd9;
+      --accent: #55776b;
+      --accent-dark: #405f55;
+      --accent-soft: #e4ece8;
+      --danger: #a64c4c;
+      --warning: #9a7440;
+      --shadow: 0 18px 50px rgba(20, 24, 21, 0.08);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+      --max-width: 1120px;
+    }
+
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      background: #ffffff;
-    }
+
     html {
       scroll-behavior: smooth;
     }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================================
+       HEADER
+    ========================================= */
+
+    .topbar {
+      width: 100%;
+      padding: 24px 28px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .topbar-inner {
+      width: 100%;
+      max-width: var(--max-width);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--text);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.05em;
+    }
+
+    .brand-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .header-action {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.65);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .header-action:hover {
+      background: var(--surface);
+      transform: translateY(-1px);
+    }
+
+    /* =========================================
+       VIEWS
+    ========================================= */
+
+    .view {
+      display: none;
+      flex: 1;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* =========================================
+       LANDING
+       LOCKED — DO NOT CHANGE
+    ========================================= */
+
+    .landing {
+      min-height: calc(100vh - 82px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 24px 90px;
+      text-align: center;
+    }
+
+    .landing-content {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    .hero-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .hero-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(48px, 8vw, 88px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      font-weight: 500;
+      max-width: 800px;
+    }
+
+    .hero-title span {
+      color: var(--accent);
+    }
+
+    .hero-description {
+      max-width: 620px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.75;
+    }
+
+    .hero-description strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      margin-top: 38px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      min-height: 50px;
+      border-radius: 999px;
+      padding: 0 23px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: 0.2s ease;
+    }
+
+    .primary-btn {
+      background: var(--text);
+      color: white;
+      border: 1px solid var(--text);
+    }
+
+    .primary-btn:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+      transform: translateY(-2px);
+    }
+
+    .secondary-btn {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .secondary-btn:hover {
+      background: var(--surface);
+      transform: translateY(-2px);
+    }
+
+    .hero-note {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+
+    /* =========================================
+       ENTRY
+    ========================================= */
+
+    .selector-page {
+      width: 100%;
+      min-height: calc(100vh - 82px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 24px 70px;
+    }
+
+    .selector-container {
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+    }
+
+    .page-eyebrow {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 13px;
+    }
+
+    .page-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(34px, 6vw, 54px);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+    }
+
+    .page-description {
+      color: var(--muted);
+      margin: 15px auto 36px;
+      max-width: 560px;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .entry-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .entry-card {
+      min-height: 250px;
+      padding: 30px;
+      text-align: left;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 5px 20px rgba(20, 24, 21, 0.03);
+      transition: 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .entry-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+      border-color: #c9cbc3;
+    }
+
+    .entry-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: var(--surface-soft);
+      color: var(--accent-dark);
+      font-size: 21px;
+      margin-bottom: 22px;
+    }
+
+    .entry-card h3 {
+      font-size: 19px;
+      letter-spacing: -0.025em;
+      margin-bottom: 8px;
+    }
+
+    .entry-card p {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+      max-width: 340px;
+    }
+
+    .entry-arrow {
+      margin-top: 24px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .guest-entry {
+      margin: 18px auto 0;
+      width: min(100%, 500px);
+      border: 1px dashed #c9cbc3;
+      background: transparent;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 13px;
+      color: var(--muted);
+      transition: 0.2s ease;
+    }
+
+    .guest-entry:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
+    .guest-icon {
+      font-size: 19px;
+    }
+
+    .guest-copy {
+      text-align: left;
+    }
+
+    .guest-copy strong {
+      display: block;
+      color: var(--text);
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
+    .guest-copy span {
+      font-size: 11px;
+    }
+
+    .back-link {
+      margin-top: 28px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      color: var(--text);
+    }
+
+    /* =========================================
+       AUTH
+    ========================================= */
+
+    .auth-page {
+      width: 100%;
+      min-height: calc(100vh - 82px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px 70px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 430px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 34px;
+      box-shadow: var(--shadow);
+    }
+
+    .auth-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      background: var(--accent-soft);
+      display: grid;
+      place-items: center;
+      margin-bottom: 22px;
+      color: var(--accent-dark);
+      font-weight: 700;
+    }
+
+    .auth-card h2 {
+      font-family: "Playfair Display", serif;
+      font-size: 32px;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+    }
+
+    .auth-card > p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 27px;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--surface-soft);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 22px;
+    }
+
+    .auth-tab {
+      border: 0;
+      background: transparent;
+      padding: 10px;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .auth-tab.active {
+      background: white;
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #53554f;
+    }
+
+    .field input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--border);
+      background: #fafaf8;
+      border-radius: 11px;
+      padding: 0 13px;
+      outline: none;
+      color: var(--text);
+      transition: 0.2s ease;
+    }
+
+    .field input:focus {
+      border-color: var(--accent);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(85, 119, 107, 0.1);
+    }
+
+    .auth-submit {
+      width: 100%;
+      height: 48px;
+      margin-top: 6px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--text);
+      color: white;
+      font-weight: 600;
+      font-size: 13px;
+      transition: 0.2s ease;
+    }
+
+    .auth-submit:hover {
+      background: var(--accent-dark);
+    }
+
+    .auth-disclaimer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+      margin-top: 17px;
+    }
+
+    /* =========================================
+       WORKSPACE
+    ========================================= */
+
+    .workspace-page {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 38px 28px 70px;
+    }
+
+    .workspace-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .workspace-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(36px, 6vw, 52px);
+      letter-spacing: -0.045em;
+    }
+
+    .workspace-subtitle {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .workspace-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px 8px 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 999px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--text);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* Empty workspace */
+
+    .workspace-empty {
+      display: none;
+    }
+
+    .workspace-empty.active {
+      display: block;
+    }
+
+    .empty-card {
+      min-height: 410px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 25px;
+      box-shadow: 0 5px 20px rgba(20, 24, 21, 0.03);
+    }
+
+    .empty-icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 20px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      margin-bottom: 23px;
+    }
+
+    .empty-card h2 {
+      font-family: "Playfair Display", serif;
+      font-size: 31px;
+      letter-spacing: -0.04em;
+    }
+
+    .empty-card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      max-width: 490px;
+      margin-top: 10px;
+    }
+
+    .empty-card .primary-btn {
+      margin-top: 25px;
+    }
+
+    /* Active workspace */
+
+    .workspace-active {
+      display: none;
+    }
+
+    .workspace-active.active {
+      display: block;
+    }
+
+    .snapshot-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .metric-value {
+      margin-top: 9px;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+    }
+
+    .metric-note {
+      margin-top: 5px;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .workspace-content-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.75fr;
+      gap: 16px;
+    }
+
+    .data-panel,
+    .status-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 25px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .panel-header h2 {
+      font-size: 16px;
+      letter-spacing: -0.025em;
+    }
+
+    .panel-header span {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .data-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .data-item {
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .data-item-main {
+      min-width: 0;
+    }
+
+    .data-item-name {
+      font-size: 12px;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .data-item-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .status-pill {
+      flex: 0 0 auto;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    .status-row:last-child {
+      border-bottom: 0;
+    }
+
+    .status-row span:first-child {
+      color: var(--muted);
+    }
+
+    .status-good {
+      color: var(--accent-dark);
+      font-weight: 700;
+    }
+
+    /* =========================================
+       INGESTION
+    ========================================= */
+
+    .ingestion-page {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 38px 28px 70px;
+    }
+
+    .ingestion-header {
+      margin-bottom: 28px;
+    }
+
+    .ingestion-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(36px, 6vw, 52px);
+      letter-spacing: -0.045em;
+    }
+
+    .ingestion-description {
+      max-width: 620px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 13px;
+      margin-top: 9px;
+    }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .source-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 21px;
+      text-align: left;
+      min-height: 145px;
+      transition: 0.2s ease;
+    }
+
+    .source-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(20, 24, 21, 0.06);
+    }
+
+    .source-icon {
+      font-size: 20px;
+      margin-bottom: 17px;
+    }
+
+    .source-card h3 {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .source-card p {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .ingestion-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-top: 22px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+    }
+
+    .danger-btn {
+      border: 1px solid #e4caca;
+      color: var(--danger);
+      background: transparent;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .danger-btn:hover {
+      background: #fbf0f0;
+    }
+
+    /* =========================================
+       GUEST PREVIEW
+    ========================================= */
+
+    .guest-page {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 38px 28px 70px;
+    }
+
+    .guest-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 15px 18px;
+      margin-bottom: 17px;
+      background: var(--accent-soft);
+      border: 1px solid #d3e1db;
+      border-radius: var(--radius-md);
+    }
+
+    .guest-banner strong {
+      font-size: 12px;
+    }
+
+    .guest-banner p {
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 3px;
+    }
+
+    .guest-lock {
+      font-size: 10px;
+      color: var(--accent-dark);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .guest-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .preview-metric {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 19px;
+    }
+
+    .preview-metric span {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .preview-metric strong {
+      display: block;
+      margin-top: 9px;
+      font-size: 19px;
+    }
+
+    .guest-preview-main {
+      margin-top: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 25px;
+    }
+
+    .guest-preview-main h2 {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .preview-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    .preview-row:last-child {
+      border-bottom: 0;
+    }
+
+    .preview-row span {
+      color: var(--muted);
+    }
+
+    /* =========================================
+       MODAL
+    ========================================= */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(20, 24, 21, 0.32);
+      backdrop-filter: blur(7px);
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 410px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 27px;
+      box-shadow: var(--shadow);
+      animation: modalIn 0.25s ease;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(0.97) translateY(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: var(--accent-soft);
+      display: grid;
+      place-items: center;
+      color: var(--accent-dark);
+      margin-bottom: 18px;
+    }
+
+    .modal h2 {
+      font-family: "Playfair Display", serif;
+      font-size: 27px;
+      letter-spacing: -0.04em;
+    }
+
+    .modal p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+      margin-top: 8px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 9px;
+      margin-top: 22px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+    }
+
+    /* =========================================
+       TOAST
+    ========================================= */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 25px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      width: max-content;
+      max-width: calc(100vw - 30px);
+      padding: 12px 17px;
+      border-radius: 999px;
+      background: var(--text);
+      color: white;
+      font-size: 11px;
+      box-shadow: var(--shadow);
+      transition: 0.3s ease;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media (max-width: 760px) {
+      .topbar {
+        padding: 18px 17px;
+      }
+
+      .header-action {
+        padding: 9px 13px;
+      }
+
+      .landing {
+        min-height: calc(100vh - 70px);
+        padding: 35px 18px 60px;
+      }
+
+      .hero-title {
+        font-size: clamp(44px, 15vw, 68px);
+      }
+
+      .hero-description {
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .hero-actions {
+        width: 100%;
+      }
+
+      .hero-actions button {
+        width: 100%;
+      }
+
+      .selector-page {
+        align-items: flex-start;
+        padding: 50px 17px;
+      }
+
+      .entry-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .entry-card {
+        min-height: 210px;
+      }
+
+      .auth-page {
+        align-items: flex-start;
+        padding: 45px 16px;
+      }
+
+      .auth-card {
+        padding: 25px 20px;
+      }
+
+      .workspace-page,
+      .ingestion-page,
+      .guest-page {
+        padding: 28px 17px 60px;
+      }
+
+      .workspace-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .snapshot-grid,
+      .guest-preview-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .workspace-content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .source-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .ingestion-footer {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .ingestion-footer .danger-btn {
+        width: 100%;
+      }
+
+      .guest-banner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 440px) {
+      .source-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .source-card {
+        min-height: 120px;
+      }
+
+      .guest-preview-grid,
+      .snapshot-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace-actions {
+        width: 100%;
+      }
+
+      .workspace-actions button {
+        width: 100%;
+      }
+
+      .data-item {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div id="root"></div>
-  
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
-  <script type="text/babel" src="script.js"></script>
+
+  <div class="app">
+
+    <!-- =========================================
+         HEADER
+    ========================================== -->
+
+    <header class="topbar">
+      <div class="topbar-inner">
+
+        <button
+          class="brand"
+          onclick="goHome()"
+          aria-label="Go to SAV3UE home"
+        >
+          <span class="brand-mark">S3</span>
+          <span class="brand-name">SAV3UE</span>
+        </button>
+
+        <button
+          id="headerAuthButton"
+          class="header-action"
+          onclick="handleHeaderAction()"
+        >
+          Sign In
+        </button>
+
+      </div>
+    </header>
+
+
+    <!-- =========================================
+         LANDING
+         LOCKED
+    ========================================== -->
+
+    <main id="landing" class="view active">
+
+      <section class="landing">
+
+        <div class="landing-content">
+
+          <div class="hero-badge">
+            <span class="hero-dot"></span>
+            Financial Intelligence Workspace
+          </div>
+
+          <h1 class="hero-title">
+            Make data<br />
+            <span>make sense.</span>
+          </h1>
+
+          <p class="hero-description">
+            SAV3UE brings financial data, evidence, rules and analysis
+            into one structured workspace —
+            so you can spend less time searching,
+            and more time <strong>understanding what matters.</strong>
+          </p>
+
+          <div class="hero-actions">
+
+            <button
+              class="primary-btn"
+              onclick="showView('entry')"
+            >
+              Get Started
+            </button>
+
+            <button
+              class="secondary-btn"
+              onclick="showToast('Good things take a little context.')"
+            >
+              Learn More
+            </button>
+
+          </div>
+
+          <p class="hero-note">
+            Evidence first · Traceable by design · Built for clarity
+          </p>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================================
+         ENTRY SELECTOR
+    ========================================== -->
+
+    <main id="entry" class="view">
+
+      <section class="selector-page">
+
+        <div class="selector-container">
+
+          <div class="page-eyebrow">
+            Choose your starting point
+          </div>
+
+          <h1 class="page-title">
+            Where would you like to begin?
+          </h1>
+
+          <p class="page-description">
+            Work with your financial workspace or bring data into SAV3UE.
+            You can also explore the experience as a guest.
+          </p>
+
+
+          <div class="entry-grid">
+
+            <button
+              class="entry-card"
+              onclick="requireAuth('workspace')"
+            >
+
+              <div>
+
+                <div class="entry-icon">⌂</div>
+
+                <h3>Workspace</h3>
+
+                <p>
+                  Enter your financial workspace, review activity,
+                  explore insights and work with your data.
+                </p>
+
+              </div>
+
+              <div class="entry-arrow">
+                Open Workspace →
+              </div>
+
+            </button>
+
+
+            <button
+              class="entry-card"
+              onclick="requireAuth('ingestion')"
+            >
+
+              <div>
+
+                <div class="entry-icon">＋</div>
+
+                <h3>Ingestion Data</h3>
+
+                <p>
+                  Bring financial information into SAV3UE from files,
+                  documents, cloud sources, URLs and more.
+                </p>
+
+              </div>
+
+              <div class="entry-arrow">
+                Add Data →
+              </div>
+
+            </button>
+
+          </div>
+
+
+          <button
+            class="guest-entry"
+            onclick="openGuest()"
+          >
+
+            <span class="guest-icon">◯</span>
+
+            <span class="guest-copy">
+              <strong>Continue as Guest</strong>
+              <span>
+                Preview SAV3UE without uploading your own data.
+              </span>
+            </span>
+
+          </button>
+
+
+          <button
+            class="back-link"
+            onclick="showView('landing')"
+          >
+            ← Back
+          </button>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================================
+         AUTH
+    ========================================== -->
+
+    <main id="auth" class="view">
+
+      <section class="auth-page">
+
+        <div class="auth-card">
+
+          <div class="auth-icon">
+            S3
+          </div>
+
+          <h2 id="authTitle">
+            Welcome back.
+          </h2>
+
+          <p id="authDescription">
+            Sign in to continue to your SAV3UE workspace.
+          </p>
+
+
+          <div class="auth-tabs">
+
+            <button
+              id="signInTab"
+              class="auth-tab active"
+              onclick="setAuthMode('signin')"
+            >
+              Sign In
+            </button>
+
+            <button
+              id="signUpTab"
+              class="auth-tab"
+              onclick="setAuthMode('signup')"
+            >
+              Sign Up
+            </button>
+
+          </div>
+
+
+          <form
+            id="authForm"
+            onsubmit="handleDemoAuth(event)"
+          >
+
+            <div
+              id="nameField"
+              class="field"
+              style="display:none;"
+            >
+
+              <label for="name">
+                Name
+              </label>
+
+              <input
+                id="name"
+                type="text"
+                placeholder="Your name"
+              />
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="email">
+                Email
+              </label>
+
+              <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                required
+              />
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="password">
+                Password
+              </label>
+
+              <input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                required
+              />
+
+            </div>
+
+
+            <button
+              class="auth-submit"
+              type="submit"
+            >
+              Continue
+            </button>
+
+          </form>
+
+
+          <p class="auth-disclaimer">
+            Authentication will be connected to Supabase Auth
+            in the next integration phase.
+          </p>
+
+
+          <button
+            class="back-link"
+            onclick="showView('entry')"
+          >
+            ← Back
+          </button>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================================
+         REAL WORKSPACE
+    ========================================== -->
+
+    <main id="workspace" class="view">
+
+      <section class="workspace-page">
+
+        <div class="workspace-header">
+
+          <div>
+
+            <div class="page-eyebrow">
+              SAV3UE
+            </div>
+
+            <h1 class="workspace-title">
+              Workspace
+            </h1>
+
+            <p class="workspace-subtitle">
+              Your financial intelligence, in one place.
+            </p>
+
+          </div>
+
+
+          <div class="workspace-user">
+
+            <span
+              class="avatar"
+              id="avatar"
+            >
+              U
+            </span>
+
+            <span id="userEmail">
+              Demo User
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- EMPTY STATE -->
+
+        <div
+          id="workspaceEmpty"
+          class="workspace-empty active"
+        >
+
+          <div class="empty-card">
+
+            <div class="empty-icon">
+              ＋
+            </div>
+
+            <h2>
+              Your workspace is ready.
+            </h2>
+
+            <p>
+              Bring your financial data in and let SAV3UE
+              turn it into structured, traceable intelligence.
+            </p>
+
+            <button
+              class="primary-btn"
+              onclick="openIngestion()"
+            >
+              + Add Data
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- ACTIVE STATE -->
+
+        <div
+          id="workspaceActive"
+          class="workspace-active"
+        >
+
+          <div class="snapshot-grid">
+
+            <div class="metric-card">
+              <div class="metric-label">
+                Data Sources
+              </div>
+
+              <div
+                class="metric-value"
+                id="metricSources"
+              >
+                0
+              </div>
+
+              <div class="metric-note">
+                Connected sources
+              </div>
+            </div>
+
+
+            <div class="metric-card">
+              <div class="metric-label">
+                Records
+              </div>
+
+              <div
+                class="metric-value"
+                id="metricRecords"
+              >
+                0
+              </div>
+
+              <div class="metric-note">
+                Structured records
+              </div>
+            </div>
+
+
+            <div class="metric-card">
+              <div class="metric-label">
+                Data Period
+              </div>
+
+              <div
+                class="metric-value"
+                id="metricPeriod"
+              >
+                —
+              </div>
+
+              <div class="metric-note">
+                Available period
+              </div>
+            </div>
+
+
+            <div class="metric-card">
+              <div class="metric-label">
+                Audit Status
+              </div>
+
+              <div
+                class="metric-value"
+                id="metricAudit"
+              >
+                Ready
+              </div>
+
+              <div class="metric-note">
+                Evidence trace
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="workspace-content-grid">
+
+            <section class="data-panel">
+
+              <div class="panel-header">
+
+                <h2>
+                  Data Activity
+                </h2>
+
+                <span id="dataActivityCount">
+                  0 sources
+                </span>
+
+              </div>
+
+
+              <div
+                id="dataList"
+                class="data-list"
+              >
+
+                <div class="data-item">
+
+                  <div class="data-item-main">
+
+                    <div class="data-item-name">
+                      No data yet
+                    </div>
+
+                    <div class="data-item-meta">
+                      Your imported data will appear here.
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            <aside class="status-panel">
+
+              <div class="panel-header">
+
+                <h2>
+                  Workspace Status
+                </h2>
+
+              </div>
+
+
+              <div class="status-list">
+
+                <div class="status-row">
+                  <span>Ingestion</span>
+                  <strong
+                    id="statusIngestion"
+                    class="status-good"
+                  >
+                    Ready
+                  </strong>
+                </div>
+
+                <div class="status-row">
+                  <span>Validation</span>
+                  <strong
+                    id="statusValidation"
+                    class="status-good"
+                  >
+                    Ready
+                  </strong>
+                </div>
+
+                <div class="status-row">
+                  <span>Evidence</span>
+                  <strong
+                    id="statusEvidence"
+                    class="status-good"
+                  >
+                    Traceable
+                  </strong>
+                </div>
+
+                <div class="status-row">
+                  <span>Issues</span>
+                  <strong id="statusIssues">
+                    0
+                  </strong>
+                </div>
+
+              </div>
+
+            </aside>
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="back-link"
+          onclick="showView('entry')"
+        >
+          ← Back to Workspace Menu
+        </button>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================================
+         INGESTION
+    ========================================== -->
+
+    <main id="ingestion" class="view">
+
+      <section class="ingestion-page">
+
+        <div class="ingestion-header">
+
+          <div class="page-eyebrow">
+            Data Ingestion
+          </div>
+
+          <h1 class="ingestion-title">
+            Bring your data in.
+          </h1>
+
+          <p class="ingestion-description">
+            Choose a source. SAV3UE will eventually extract,
+            normalize, validate and prepare your data for analysis.
+          </p>
+
+        </div>
+
+
+        <div class="source-grid">
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('CSV')"
+          >
+            <div class="source-icon">▤</div>
+
+            <h3>CSV</h3>
+
+            <p>
+              Comma-separated financial data.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('Excel / XLSX')"
+          >
+            <div class="source-icon">▦</div>
+
+            <h3>Excel / XLSX</h3>
+
+            <p>
+              Spreadsheet and workbook data.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('Google Sheets')"
+          >
+            <div class="source-icon">▤</div>
+
+            <h3>Google Sheets</h3>
+
+            <p>
+              Connect structured spreadsheet data.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('PDF')"
+          >
+            <div class="source-icon">▧</div>
+
+            <h3>PDF</h3>
+
+            <p>
+              Financial reports and documents.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('JSON')"
+          >
+            <div class="source-icon">{ }</div>
+
+            <h3>JSON</h3>
+
+            <p>
+              Structured application data.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('OCR')"
+          >
+            <div class="source-icon">⌁</div>
+
+            <h3>OCR</h3>
+
+            <p>
+              Extract information from documents.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('Gmail')"
+          >
+            <div class="source-icon">✉</div>
+
+            <h3>Gmail</h3>
+
+            <p>
+              Financial information from email.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('Google Drive')"
+          >
+            <div class="source-icon">◫</div>
+
+            <h3>Google Drive</h3>
+
+            <p>
+              Files stored in your cloud workspace.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('URL')"
+          >
+            <div class="source-icon">↗</div>
+
+            <h3>URL</h3>
+
+            <p>
+              Retrieve data from an external source.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('Manual Entry')"
+          >
+            <div class="source-icon">＋</div>
+
+            <h3>Manual Entry</h3>
+
+            <p>
+              Enter structured data manually.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="simulateUpload('API')"
+          >
+            <div class="source-icon">⌘</div>
+
+            <h3>API</h3>
+
+            <p>
+              Connect an external data system.
+            </p>
+          </button>
+
+
+          <button
+            class="source-card"
+            onclick="showToast('We can add another source when it earns its place.')"
+          >
+            <div class="source-icon">⋯</div>
+
+            <h3>More Sources</h3>
+
+            <p>
+              Additional connectors can live here.
+            </p>
+          </button>
+
+        </div>
+
+
+        <div class="ingestion-footer">
+
+          <button
+            class="danger-btn"
+            onclick="resetData()"
+          >
+            Reset Data
+          </button>
+
+          <button
+            class="danger-btn"
+            onclick="deleteData()"
+          >
+            Delete Data
+          </button>
+
+        </div>
+
+
+        <button
+          class="back-link"
+          onclick="backFromIngestion()"
+        >
+          ← Back
+        </button>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================================
+         GUEST PREVIEW
+    ========================================== -->
+
+    <main id="guest" class="view">
+
+      <section class="guest-page">
+
+        <div class="guest-banner">
+
+          <div>
+            <strong>
+              Guest Preview
+            </strong>
+
+            <p>
+              You are exploring a read-only demonstration workspace.
+            </p>
+          </div>
+
+          <div class="guest-lock">
+            ◉ READ ONLY
+          </div>
+
+        </div>
+
+
+        <div class="workspace-header">
+
+          <div>
+
+            <div class="page-eyebrow">
+              SAV3UE Preview
+            </div>
+
+            <h1 class="workspace-title">
+              Workspace
+            </h1>
+
+            <p class="workspace-subtitle">
+              See how your financial intelligence could look.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="guest-preview-grid">
+
+          <div class="preview-metric">
+            <span>Data Sources</span>
+            <strong>3</strong>
+          </div>
+
+          <div class="preview-metric">
+            <span>Records</span>
+            <strong>2,481</strong>
+          </div>
+
+          <div class="preview-metric">
+            <span>Data Period</span>
+            <strong>2026</strong>
+          </div>
+
+          <div class="preview-metric">
+            <span>Audit Status</span>
+            <strong>Ready</strong>
+          </div>
+
+        </div>
+
+
+        <div class="guest-preview-main">
+
+          <h2>
+            Example Data Activity
+          </h2>
+
+          <div class="preview-row">
+            <strong>Transactions.csv</strong>
+            <span>1,840 records</span>
+          </div>
+
+          <div class="preview-row">
+            <strong>Invoices_2026.pdf</strong>
+            <span>421 records</span>
+          </div>
+
+          <div class="preview-row">
+            <strong>Expense_Report.xlsx</strong>
+            <span>220 records</span>
+          </div>
+
+          <div class="preview-row">
+            <strong>Validation</strong>
+            <span>All sample data validated</span>
+          </div>
+
+        </div>
+
+
+        <button
+          class="back-link"
+          onclick="showView('entry')"
+        >
+          ← Back
+        </button>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================================
+         AUTH REQUIRED MODAL
+    ========================================== -->
+
+    <div
+      id="authRequiredModal"
+      class="modal-backdrop"
+    >
+
+      <div class="modal">
+
+        <div class="modal-icon">
+          🔒
+        </div>
+
+        <h2>
+          Sign in to continue.
+        </h2>
+
+        <p>
+          Your data belongs inside a protected workspace.
+          Sign in or create an account before adding or managing data.
+        </p>
+
+        <div class="modal-actions">
+
+          <button
+            class="secondary-btn"
+            onclick="closeModal()"
+          >
+            Not now
+          </button>
+
+          <button
+            class="primary-btn"
+            onclick="continueToAuth()"
+          >
+            Sign In
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         TOAST
+    ========================================== -->
+
+    <div
+      id="toast"
+      class="toast"
+    ></div>
+
+  </div>
+
+
+  <script>
+    /* =====================================================
+       SAV3UE UI FOUNDATION
+       ---------------------------------------------
+       Current stage:
+       - Frontend UI
+       - Demo authentication
+       - Demo ingestion
+       - Demo workspace state
+       - Guest read-only preview
+
+       Next integration:
+       - Supabase Auth
+       - Supabase Storage
+       - Workspace records
+       - Real ingestion pipeline
+    ===================================================== */
+
+
+    /* =========================================
+       STATE
+    ========================================= */
+
+    let authMode = "signin";
+
+    let pendingDestination = "workspace";
+
+    let previousView = "entry";
+
+    let demoData = JSON.parse(
+      localStorage.getItem("sav3ue_demo_data") || "[]"
+    );
+
+
+    const views = [
+      "landing",
+      "entry",
+      "auth",
+      "workspace",
+      "ingestion",
+      "guest"
+    ];
+
+
+    /* =========================================
+       VIEW ROUTING
+    ========================================= */
+
+    function showView(viewName) {
+
+      views.forEach((view) => {
+
+        const element =
+          document.getElementById(view);
+
+        if (element) {
+          element.classList.remove("active");
+        }
+
+      });
+
+
+      const target =
+        document.getElementById(viewName);
+
+      if (target) {
+        target.classList.add("active");
+      }
+
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+
+      if (viewName === "workspace") {
+        renderWorkspace();
+      }
+
+    }
+
+
+    function goHome() {
+      showView("landing");
+    }
+
+
+    /* =========================================
+       AUTH STATE
+    ========================================= */
+
+    function isAuthenticated() {
+
+      return (
+        localStorage.getItem(
+          "sav3ue_demo_authenticated"
+        ) === "true"
+      );
+
+    }
+
+
+    function requireAuth(destination) {
+
+      pendingDestination = destination;
+
+      if (isAuthenticated()) {
+
+        openDestination(destination);
+
+        return;
+
+      }
+
+
+      /*
+       * In the final version this becomes:
+       *
+       * Supabase Auth session check.
+       *
+       * Guest can NEVER pass this boundary.
+       */
+
+      if (destination === "ingestion") {
+
+        openAuthRequiredModal();
+
+        return;
+
+      }
+
+
+      setAuthMode("signin");
+
+      showView("auth");
+
+    }
+
+
+    function openDestination(destination) {
+
+      if (destination === "workspace") {
+
+        showView("workspace");
+
+        return;
+
+      }
+
+
+      if (destination === "ingestion") {
+
+        previousView = "workspace";
+
+        showView("ingestion");
+
+      }
+
+    }
+
+
+    function openAuth() {
+
+      pendingDestination = "workspace";
+
+      setAuthMode("signin");
+
+      showView("auth");
+
+    }
+
+
+    function handleHeaderAction() {
+
+      if (isAuthenticated()) {
+
+        showView("workspace");
+
+      } else {
+
+        openAuth();
+
+      }
+
+    }
+
+
+    /* =========================================
+       AUTH MODE
+    ========================================= */
+
+    function setAuthMode(mode) {
+
+      authMode = mode;
+
+
+      const signInTab =
+        document.getElementById("signInTab");
+
+      const signUpTab =
+        document.getElementById("signUpTab");
+
+      const nameField =
+        document.getElementById("nameField");
+
+      const title =
+        document.getElementById("authTitle");
+
+      const description =
+        document.getElementById("authDescription");
+
+
+      if (mode === "signin") {
+
+        signInTab.classList.add("active");
+
+        signUpTab.classList.remove("active");
+
+        nameField.style.display = "none";
+
+        title.textContent =
+          "Welcome back.";
+
+        description.textContent =
+          "Sign in to continue to your SAV3UE workspace.";
+
+      } else {
+
+        signInTab.classList.remove("active");
+
+        signUpTab.classList.add("active");
+
+        nameField.style.display = "block";
+
+        title.textContent =
+          "Create your workspace.";
+
+        description.textContent =
+          "Create an account and start building your financial workspace.";
+
+      }
+
+    }
+
+
+    /* =========================================
+       DEMO AUTH
+    ========================================= */
+
+    function handleDemoAuth(event) {
+
+      event.preventDefault();
+
+
+      const email =
+        document.getElementById("email")
+          .value
+          .trim();
+
+
+      if (!email) {
+
+        showToast(
+          "Please enter your email."
+        );
+
+        return;
+
+      }
+
+
+      const name =
+        document.getElementById("name")
+          .value
+          .trim();
+
+
+      localStorage.setItem(
+        "sav3ue_demo_authenticated",
+        "true"
+      );
+
+
+      localStorage.setItem(
+        "sav3ue_demo_email",
+        email
+      );
+
+
+      if (name) {
+
+        localStorage.setItem(
+          "sav3ue_demo_name",
+          name
+        );
+
+      }
+
+
+      updateUserUI();
+
+
+      if (authMode === "signin") {
+
+        showToast(
+          "Welcome back. The numbers missed you."
+        );
+
+      } else {
+
+        showToast(
+          "Workspace created. Nice. Now bring some data."
+        );
+
+      }
+
+
+      setTimeout(() => {
+
+        openDestination(
+          pendingDestination
+        );
+
+      }, 500);
+
+    }
+
+
+    function updateUserUI() {
+
+      const email =
+        localStorage.getItem(
+          "sav3ue_demo_email"
+        ) || "Demo User";
+
+
+      const name =
+        localStorage.getItem(
+          "sav3ue_demo_name"
+        ) ||
+        email.split("@")[0] ||
+        "User";
+
+
+      const userEmail =
+        document.getElementById("userEmail");
+
+
+      const avatar =
+        document.getElementById("avatar");
+
+
+      const headerButton =
+        document.getElementById(
+          "headerAuthButton"
+        );
+
+
+      if (userEmail) {
+
+        userEmail.textContent =
+          email;
+
+      }
+
+
+      if (avatar) {
+
+        avatar.textContent =
+          name
+            .substring(0, 1)
+            .toUpperCase();
+
+      }
+
+
+      if (headerButton) {
+
+        headerButton.textContent =
+          isAuthenticated()
+            ? "Workspace"
+            : "Sign In";
+
+      }
+
+    }
+
+
+    /* =========================================
+       GUEST
+    ========================================= */
+
+    function openGuest() {
+
+      showToast(
+        "Guest mode unlocked. Look around — hands off the data."
+      );
+
+
+      setTimeout(() => {
+
+        showView("guest");
+
+      }, 350);
+
+    }
+
+
+    /* =========================================
+       INGESTION NAVIGATION
+    ========================================= */
+
+    function openIngestion() {
+
+      if (!isAuthenticated()) {
+
+        openAuthRequiredModal();
+
+        return;
+
+      }
+
+
+      previousView = "workspace";
+
+      showView("ingestion");
+
+    }
+
+
+    function backFromIngestion() {
+
+      showView(
+        previousView || "workspace"
+      );
+
+    }
+
+
+    /* =========================================
+       DEMO INGESTION
+    ========================================= */
+
+    function simulateUpload(source) {
+
+      if (!isAuthenticated()) {
+
+        openAuthRequiredModal();
+
+        return;
+
+      }
+
+
+      showToast(
+        "Teaching the numbers some manners…"
+      );
+
+
+      setTimeout(() => {
+
+        const newData = {
+
+          id:
+            Date.now(),
+
+          source:
+            source,
+
+          name:
+            demoFilename(source),
+
+          records:
+            demoRecordCount(source),
+
+          createdAt:
+            new Date().toLocaleString(
+              undefined,
+              {
+                dateStyle: "medium",
+                timeStyle: "short"
+              }
+            )
+
+        };
+
+
+        demoData.push(
+          newData
+        );
+
+
+        localStorage.setItem(
+          "sav3ue_demo_data",
+          JSON.stringify(demoData)
+        );
+
+
+        showToast(
+          "Nice. The numbers have entered the building."
+        );
+
+
+        setTimeout(() => {
+
+          /*
+           * Important UX rule:
+           *
+           * Ingestion does not become
+           * another permanent workspace.
+           *
+           * Once data enters the system,
+           * Workspace becomes its home.
+           */
+
+          showView("workspace");
+
+        }, 650);
+
+      }, 900);
+
+    }
+
+
+    function demoFilename(source) {
+
+      const names = {
+
+        "CSV":
+          "Transactions.csv",
+
+        "Excel / XLSX":
+          "Financial_Data.xlsx",
+
+        "Google Sheets":
+          "Google_Sheet_Data",
+
+        "PDF":
+          "Financial_Report.pdf",
+
+        "JSON":
+          "Transactions.json",
+
+        "OCR":
+          "Scanned_Document",
+
+        "Gmail":
+          "Gmail_Financial_Data",
+
+        "Google Drive":
+          "Drive_Financial_Data",
+
+        "URL":
+          "Imported_URL_Data",
+
+        "Manual Entry":
+          "Manual_Entry",
+
+        "API":
+          "API_Data"
+
+      };
+
+
+      return (
+        names[source] ||
+        source + " Data"
+      );
+
+    }
+
+
+    function demoRecordCount(source) {
+
+      const counts = {
+
+        "CSV":
+          2481,
+
+        "Excel / XLSX":
+          1840,
+
+        "Google Sheets":
+          923,
+
+        "PDF":
+          48,
+
+        "JSON":
+          1560,
+
+        "OCR":
+          74,
+
+        "Gmail":
+          315,
+
+        "Google Drive":
+          421,
+
+        "URL":
+          210,
+
+        "Manual Entry":
+          25,
+
+        "API":
+          5020
+
+      };
+
+
+      return (
+        counts[source] ||
+        100
+      );
+
+    }
+
+
+    /* =========================================
+       WORKSPACE RENDER
+    ========================================= */
+
+    function renderWorkspace() {
+
+      const empty =
+        document.getElementById(
+          "workspaceEmpty"
+        );
+
+
+      const active =
+        document.getElementById(
+          "workspaceActive"
+        );
+
+
+      if (demoData.length === 0) {
+
+        empty.classList.add("active");
+
+        active.classList.remove("active");
+
+        return;
+
+      }
+
+
+      empty.classList.remove("active");
+
+      active.classList.add("active");
+
+
+      const totalRecords =
+        demoData.reduce(
+          (sum, item) =>
+            sum + item.records,
+          0
+        );
+
+
+      document.getElementById(
+        "metricSources"
+      ).textContent =
+        demoData.length;
+
+
+      document.getElementById(
+        "metricRecords"
+      ).textContent =
+        totalRecords.toLocaleString();
+
+
+      document.getElementById(
+        "metricPeriod"
+      ).textContent =
+        "2026";
+
+
+      document.getElementById(
+        "dataActivityCount"
+      ).textContent =
+        demoData.length +
+        (
+          demoData.length === 1
+            ? " source"
+            : " sources"
+        );
+
+
+      document.getElementById(
+        "statusIngestion"
+      ).textContent =
+        "Complete";
+
+
+      document.getElementById(
+        "statusValidation"
+      ).textContent =
+        "Ready";
+
+
+      document.getElementById(
+        "statusEvidence"
+      ).textContent =
+        "Traceable";
+
+
+      document.getElementById(
+        "statusIssues"
+      ).textContent =
+        "0";
+
+
+      const list =
+        document.getElementById(
+          "dataList"
+        );
+
+
+      list.innerHTML = "";
+
+
+      demoData
+        .slice()
+        .reverse()
+        .forEach((item) => {
+
+          const row =
+            document.createElement(
+              "div"
+            );
+
+
+          row.className =
+            "data-item";
+
+
+          row.innerHTML = `
+
+            <div class="data-item-main">
+
+              <div class="data-item-name">
+                ${escapeHtml(item.name)}
+              </div>
+
+              <div class="data-item-meta">
+                ${item.records.toLocaleString()}
+                records · ${escapeHtml(item.createdAt)}
+              </div>
+
+            </div>
+
+            <span class="status-pill">
+              READY
+            </span>
+
+          `;
+
+
+          list.appendChild(row);
+
+        });
+
+    }
+
+
+    /* =========================================
+       RESET
+    ========================================= */
+
+    function resetData() {
+
+      if (!isAuthenticated()) {
+
+        openAuthRequiredModal();
+
+        return;
+
+      }
+
+
+      if (demoData.length === 0) {
+
+        showToast(
+          "There is nothing to reset. It’s suspiciously quiet in here."
+        );
+
+        return;
+
+      }
+
+
+      demoData = [];
+
+
+      localStorage.removeItem(
+        "sav3ue_demo_data"
+      );
+
+
+      renderWorkspace();
+
+
+      showToast(
+        "Fresh start. No hard feelings."
+      );
+
+
+      setTimeout(() => {
+
+        showView("workspace");
+
+      }, 500);
+
+    }
+
+
+    /* =========================================
+       DELETE
+    ========================================= */
+
+    function deleteData() {
+
+      if (!isAuthenticated()) {
+
+        openAuthRequiredModal();
+
+        return;
+
+      }
+
+
+      if (demoData.length === 0) {
+
+        showToast(
+          "Nothing to delete. The cupboard is already empty."
+        );
+
+        return;
+
+      }
+
+
+      openDeleteConfirmation();
+
+    }
+
+
+    function openDeleteConfirmation() {
+
+      const confirmed =
+        window.confirm(
+          "Delete all demo workspace data?"
+        );
+
+
+      if (!confirmed) {
+
+        showToast(
+          "Good call. Nothing was deleted."
+        );
+
+        return;
+
+      }
+
+
+      demoData = [];
+
+
+      localStorage.removeItem(
+        "sav3ue_demo_data"
+      );
+
+
+      renderWorkspace();
+
+
+      showToast(
+        "Gone. Like it never happened."
+      );
+
+
+      setTimeout(() => {
+
+        showView("workspace");
+
+      }, 500);
+
+    }
+
+
+    /* =========================================
+       AUTH REQUIRED MODAL
+    ========================================= */
+
+    function openAuthRequiredModal() {
+
+      const modal =
+        document.getElementById(
+          "authRequiredModal"
+        );
+
+
+      modal.classList.add(
+        "show"
+      );
+
+    }
+
+
+    function closeModal() {
+
+      const modal =
+        document.getElementById(
+          "authRequiredModal"
+        );
+
+
+      modal.classList.remove(
+        "show"
+      );
+
+    }
+
+
+    function continueToAuth() {
+
+      closeModal();
+
+      setAuthMode("signin");
+
+      showView("auth");
+
+    }
+
+
+    /* =========================================
+       TOAST / COMEDY ALERTS
+    ========================================= */
+
+    let toastTimer;
+
+
+    function showToast(message) {
+
+      const toast =
+        document.getElementById(
+          "toast"
+        );
+
+
+      toast.textContent =
+        message;
+
+
+      toast.classList.add(
+        "show"
+      );
+
+
+      clearTimeout(
+        toastTimer
+      );
+
+
+      toastTimer =
+        setTimeout(() => {
+
+          toast.classList.remove(
+            "show"
+          );
+
+        }, 3200);
+
+    }
+
+
+    /* =========================================
+       SAFE HTML
+    ========================================= */
+
+    function escapeHtml(value) {
+
+      return String(value)
+
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+
+        .replace(
+          /</g,
+          "&lt;"
+        )
+
+        .replace(
+          />/g,
+          "&gt;"
+        )
+
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    /* =========================================
+       INITIALIZATION
+    ========================================= */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        updateUserUI();
+
+        renderWorkspace();
+
+      }
+    );
+
+
+    /* =========================================
+       CLOSE MODAL ON BACKDROP CLICK
+    ========================================= */
+
+    document
+      .getElementById(
+        "authRequiredModal"
+      )
+      .addEventListener(
+        "click",
+        (event) => {
+
+          if (
+            event.target.id ===
+            "authRequiredModal"
+          ) {
+
+            closeModal();
+
+          }
+
+        }
+      );
+
+  </script>
+
 </body>
 </html>
