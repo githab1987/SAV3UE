@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import {
   X, Home, UploadCloud, GitCompareArrows, Scale, FileSpreadsheet,
