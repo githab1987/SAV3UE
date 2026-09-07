@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import {
-  X, Home, UploadCloud, GitCompareArrows, Scale, FileSpreadsheet,
+// ✅ BENAR
+  X, Home, UploadCloud, ArrowLeftRight, Scale, FileSpreadsheet,
   AlertTriangle, Settings, CheckCircle2, ChevronRight,
   Mail, HardDrive, Link2, BatteryCharging, LayoutGrid,
 } from "lucide-react";
