@@ -19,10 +19,8 @@ function Logo({ size = 22, tone = "light" }) {
     </svg>
   );
 }
-
-function HomeScreen({ onStart }) {
-  const [in_, setIn] = useState(false);
-  useEffect(() => { 
+// ✅ BENAR
+function HomeScreen({ onStart }: { onStart: () => void }) { 
     const t = setTimeout(() => setIn(true), 80); 
     return () => clearTimeout(t); 
   }, []);
