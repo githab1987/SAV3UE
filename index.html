@@ -2428,6 +2428,7 @@ async function loadWorkspace(){
 
   if(createError){
     console.error("Workspace create error:", createError);
+    alert(createError.message || "Workspace create failed.");
     toast("Unable to create workspace.");
     return;
   }
