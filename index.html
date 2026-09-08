@@ -2471,9 +2471,20 @@ async function loadWorkspace(){
 
   });
 
-  $("addDataBtn").addEventListener("click", () => {
+  $("addDataBtn").addEventListener("click", async () => {
 
-    showScreen("ingestion");
+  if(!state.workspaceId){
+    await loadWorkspace();
+  }
+
+  if(!state.workspaceId){
+    toast("Workspace is not available.");
+    return;
+  }
+
+  showScreen("ingestion");
+
+});
 
   });
 
