@@ -2062,30 +2062,7 @@ if(window.supabase){
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
   {
-    global: {
-      fetch: async (input, init) => {
-        console.log("SAV3UE FETCH →", input);
-
-        try {
-          const response = await fetch(input, init);
-          console.log(
-            "SAV3UE FETCH ←",
-            response.status,
-            input
-          );
-          return response;
-        } catch (err) {
-          console.error(
-            "SAV3UE FETCH NETWORK ERROR →",
-            input,
-            err
-          );
-          throw err;
-        }
-      }
-    }
-  }
-);
+    
 }else{
   console.error("Supabase library failed to load.");
 }
