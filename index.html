@@ -2140,6 +2140,18 @@ function setProcessStep(id, status){
 
   el.classList.remove("waiting","active","done");
   el.classList.add(status);
+
+  const label = el.querySelector(".process-step-status");
+
+  if(label){
+    const text = {
+      waiting: "Waiting",
+      active: "Processing",
+      done: "Complete"
+    };
+
+    label.textContent = text[status] || status;
+  }
 }
 
 function back(){
