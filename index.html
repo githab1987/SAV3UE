@@ -2862,15 +2862,20 @@ async function loadWorkspace(){
 
     reader.readAsText(file);
 
-    },700);
+},700);
 
-     }
+}
+
+function prepareReview(){
+
+  showScreen("review");
+
+}
 
 
-  /* ---------- CONTINUE ANALYSIS ---------- */
+/* ---------- CONTINUE ANALYSIS ---------- */
 
-  $("continueAnalysisBtn").addEventListener("click", async () => {
-
+$("continueAnalysisBtn").addEventListener("click", async () => {
     if(
       !state.parsedRecords ||
       state.parsedRecords.length === 0
