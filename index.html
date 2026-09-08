@@ -2797,26 +2797,44 @@ async function loadWorkspace(){
 
   });
 
-  $("continueAnalysisBtn").addEventListener("click", () => {
+  $("continueAnalysisBtn").addEventListener("click", async () => {
 
-    toast("Dataset approved for analysis.");
+  if(
+    state.parsedRecords &&
+    state.parsedRecords.length > 0
+  ){
 
-    addActivity(
-      "Dataset approved for analysis.",
-      "Just now"
+    console.log(
+      "SAV3UE ready for persistence:",
+      state.parsedRecords.length,
+      "records"
     );
 
-    setTimeout(() => {
+    toast(
+      state.parsedRecords.length +
+      " records parsed and ready for persistence."
+    );
 
-      showScreen("workspace");
+  }
 
-      toast(
-        "Analysis workspace is ready for the next engine stage."
-      );
+  toast("Dataset approved for analysis.");
 
-    },350);
+  addActivity(
+    "Dataset approved for analysis.",
+    "Just now"
+  );
 
-  });
+  setTimeout(() => {
+
+    showScreen("workspace");
+
+    toast(
+      "Analysis workspace is ready for the next engine stage."
+    );
+
+  },350);
+
+});
 
   /* ---------- ACTIVITY ---------- */
 
