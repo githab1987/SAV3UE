@@ -2109,52 +2109,32 @@ if(window.supabase){
 
   const $ = (id) => document.getElementById(id);
   
-function showScreen(name, pushHistory = true){
+  function showScreen(name, pushHistory = true){
 
-  if(!screens.includes(name)) return;
+    if(!screens.includes(name)) return;
 
-  if(pushHistory && state.screen !== name){
-    state.history.push(state.screen);
-  }
-
-  state.screen = name;
-
-  screens.forEach(screen => {
-    const el = $(screen + "Screen");
-    if(el){
-      el.classList.toggle("hidden", screen !== name);
+    if(pushHistory && state.screen !== name){
+      state.history.push(state.screen);
     }
-  });
 
-  updateTopbar();
+    state.screen = name;
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-}
+    screens.forEach(screen => {
+      const el = $(screen + "Screen");
+      if(el){
+        el.classList.toggle("hidden", screen !== name);
+      }
+    });
 
-function setProcessStep(id, status){
-  const el = $(id);
-  if(!el) return;
+    updateTopbar();
 
-  el.classList.remove("waiting","active","done");
-  el.classList.add(status);
-
-  const label = el.querySelector(".process-step-status");
-
-  if(label){
-    const text = {
-      waiting: "Waiting",
-      active: "Processing",
-      done: "Complete"
-    };
-
-    label.textContent = text[status] || status;
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
   }
-}
 
-function back(){
+  function back(){
 
     if(state.history.length === 0){
       showScreen("landing", false);
@@ -2255,11 +2235,18 @@ function back(){
 
   });
 
+  /* [FIX #3] data-action='ingestion': pastikan workspaceId sudah dimuat
+     lewat loadWorkspace() sebelum masuk layar ingestion, supaya
+     continueAnalysisBtn nanti tidak menemukan state.workspaceId kosong. */
   document.querySelectorAll("[data-action='ingestion']").forEach(btn => {
 
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
 
       if(!requireAuth("ingestion")) return;
+
+      if(!state.workspaceId){
+        await loadWorkspace();
+      }
 
       showScreen("ingestion");
 
@@ -2471,10 +2458,15 @@ async function loadWorkspace(){
 
   });
 
-  $("addDataBtn").addEventListener("click", () => {
+  /* [FIX #3] addDataBtn: pastikan workspaceId sudah dimuat sebelum
+     ke ingestion, sama seperti tombol data-action='ingestion' di atas. */
+  $("addDataBtn").addEventListener("click", async () => {
 
-  showScreen("ingestion");
+    if(!state.workspaceId){
+      await loadWorkspace();
+    }
 
+    showScreen("ingestion");
 
   });
 
@@ -2619,7 +2611,33 @@ async function loadWorkspace(){
 
   });
 
-  $("fileInput").addEventListener("change", event => {
+  /* [FIX #1] Fungsi parsing file sesungguhnya, mengisi state.parsedRecords.
+     Ini yang sebelumnya hilang total sehingga continueAnalysisBtn selalu
+     berhenti di guard "No parsed records available." */
+  async function parseFileToRecords(file){
+
+    const extension = file.name.split(".").pop().toLowerCase();
+
+    if(extension === "json"){
+
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+
+      return Array.isArray(parsed) ? parsed : [parsed];
+
+    }
+
+    // CSV & Excel/XLSX sama-sama bisa dibaca lewat XLSX.read
+    const buffer = await file.arrayBuffer();
+    const workbook = XLSX.read(buffer, { type: "array" });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+
+    return XLSX.utils.sheet_to_json(sheet, { defval: null });
+
+  }
+
+  $("fileInput").addEventListener("change", async event => {
 
     const file = event.target.files[0];
 
@@ -2634,6 +2652,19 @@ async function loadWorkspace(){
 
     state.selectedSource =
       state.selectedSource || file.name.split(".").pop().toUpperCase();
+
+    /* [FIX #1] parsing sebelum masuk animasi processing */
+    try{
+
+      state.parsedRecords = await parseFileToRecords(file);
+
+    }catch(err){
+
+      console.error("SAV3UE parse error:", err);
+      toast("Gagal membaca isi file.");
+      return;
+
+    }
 
     toast("File ready. Starting processing…");
 
@@ -2667,7 +2698,7 @@ async function loadWorkspace(){
 
   });
 
-  uploadZone.addEventListener("drop", event => {
+  uploadZone.addEventListener("drop", async event => {
 
     const file = event.dataTransfer.files[0];
 
@@ -2683,291 +2714,260 @@ async function loadWorkspace(){
     state.selectedSource =
       file.name.split(".").pop().toUpperCase();
 
+    /* [FIX #1] parsing juga untuk jalur drag-and-drop */
+    try{
+
+      state.parsedRecords = await parseFileToRecords(file);
+
+    }catch(err){
+
+      console.error("SAV3UE parse error:", err);
+      toast("Gagal membaca isi file.");
+      return;
+
+    }
+
     startProcessing();
 
   });
 
   /* ---------- PROCESSING ---------- */
 
-     function startProcessing(){
+  function setProcessStep(id,status){
 
-  clearTimeout(state.processingTimer);
+    const step = $(id);
 
-  showScreen("processing");
+    if(!step) return;
 
-  setProcessStep("stepSource","active");
+    step.classList.remove("active","done");
 
-  setProcessStep("stepParse","waiting");
-  setProcessStep("stepValidate","waiting");
-  setProcessStep("stepPrepare","waiting");
+    const statusText =
+      step.querySelector(".process-step-status");
 
-  $("processingDescription").textContent =
-    state.selectedFile
-      ? "Preparing " + state.selectedFile.name + " for review."
-      : "Preparing your dataset.";
+    if(status === "active"){
 
-  const file = state.selectedFile;
+      step.classList.add("active");
+      statusText.textContent = "Processing…";
 
-  if(!file){
+    }
 
-    toast("No file selected.");
+    if(status === "done"){
 
-    return;
+      step.classList.add("done");
+      statusText.textContent = "Complete";
+
+      step.querySelector(".process-step-icon").textContent = "✓";
+
+    }
+
+    if(status === "waiting"){
+
+      statusText.textContent = "Waiting";
+
+    }
 
   }
 
-  state.parsedRecords = [];
+  function startProcessing(){
 
-  setTimeout(() => {
+    clearTimeout(state.processingTimer);
 
-    setProcessStep("stepSource","done");
-    setProcessStep("stepParse","active");
+    showScreen("processing");
 
-    const reader = new FileReader();
+    setProcessStep("stepSource","active");
 
-    reader.onload = event => {
+    setProcessStep("stepParse","waiting");
+    setProcessStep("stepValidate","waiting");
+    setProcessStep("stepPrepare","waiting");
 
-      try{
+    $("processingDescription").textContent =
+      state.selectedFile
+        ? "Preparing " + state.selectedFile.name + " for review."
+        : "Preparing your dataset.";
 
-        const text = event.target.result;
+    setTimeout(() => {
 
-        const lines =
-          text
-            .replace(/\r\n/g,"\n")
-            .replace(/\r/g,"\n")
-            .split("\n")
-            .filter(line => line.trim() !== "");
+      setProcessStep("stepSource","done");
+      setProcessStep("stepParse","active");
 
-        if(lines.length < 2){
+    },700);
 
-          throw new Error(
-            "CSV contains no data records."
-          );
+    setTimeout(() => {
 
-        }
+      setProcessStep("stepParse","done");
+      setProcessStep("stepValidate","active");
 
-        const headers =
-          lines[0]
-            .split(",")
-            .map(header =>
-              header
-                .trim()
-                .replace(/^"|"$/g,"")
-            );
+    },1400);
 
-        const records = [];
+    setTimeout(() => {
 
-        for(
-          let i = 1;
-          i < lines.length;
-          i++
-        ){
+      setProcessStep("stepValidate","done");
+      setProcessStep("stepPrepare","active");
 
-          const values =
-            lines[i]
-              .split(",")
-              .map(value =>
-                value
-                  .trim()
-                  .replace(/^"|"$/g,"")
-              );
+    },2200);
 
-          const record = {};
+    state.processingTimer = setTimeout(() => {
 
-          headers.forEach((header,index) => {
+      setProcessStep("stepPrepare","done");
 
-            record[header] =
-              values[index] !== undefined
-                ? values[index]
-                : "";
+      $("processingDescription").textContent =
+        "Processing complete. Review the findings before analysis.";
 
-          });
+      setTimeout(() => {
 
-          records.push(record);
+        prepareReview();
 
-        }
+      },600);
 
-        state.parsedRecords = records;
+    },3000);
 
-        console.log(
-          "SAV3UE parsed:",
-          state.parsedRecords.length,
-          "records"
-        );
+  }
 
-        setProcessStep(
-          "stepParse",
-          "done"
-        );
+  /* ---------- DATA REVIEW ---------- */
 
-        setProcessStep(
-          "stepValidate",
-          "active"
-        );
+  function prepareReview(){
 
-        setTimeout(() => {
+    const file = state.selectedFile;
 
-          setProcessStep(
-            "stepValidate",
-            "done"
-          );
+    $("reviewSubtitle").textContent =
+      file
+        ? file.name + " is ready for review."
+        : "Dataset is ready for review.";
 
-          setProcessStep(
-            "stepPrepare",
-            "active"
-          );
+    showScreen("review");
 
-          setTimeout(() => {
+  }
 
-            setProcessStep(
-              "stepPrepare",
-              "done"
-            );
+  $("reviewBackBtn").addEventListener("click", () => {
 
-            $("processingDescription").textContent =
-              "Processing complete. Review the findings before analysis.";
+    clearTimeout(state.processingTimer);
 
-            prepareReview();
+    showScreen("ingestion");
 
-          },600);
+  });
 
-        },700);
+  $("reviewResetBtn").addEventListener("click", () => {
 
-      }catch(error){
+    state.selectedFile = null;
+    state.selectedSource = null;
+    state.parsedRecords = null;
 
-        console.error(
-          "SAV3UE parsing error:",
-          error
-        );
+    $("selectedFile").textContent =
+      "No file selected";
 
-        state.parsedRecords = [];
+    $("fileInput").value = "";
 
-        toast(
-          error.message ||
-          "Unable to parse CSV file."
-        );
+    toast("Dataset review reset.");
 
-      }
+    showScreen("ingestion");
 
-    };
+  });
 
-    reader.onerror = () => {
+  /* [FIX #2] Handler continueAnalysisBtn ini SATU-SATUNYA — sebelumnya
+     ada duplikasi listener yang ter-paste di tengah for-loop, sudah
+     dihapus. Isi logikanya sendiri tidak diubah. */
+  $("continueAnalysisBtn").addEventListener("click", async () => {
 
-      state.parsedRecords = [];
+  if(
+    !state.parsedRecords ||
+    state.parsedRecords.length === 0
+  ){
+    toast("No parsed records available.");
+    return;
+  }
 
-      toast(
-        "Unable to read the selected file."
-      );
+  if(!state.workspaceId){
+    toast("Workspace is not available.");
+    return;
+  }
 
-    };
+  try{
 
-    reader.readAsText(file);
+    const file = state.selectedFile;
 
-},700);
+    const storagePath =
+      state.workspaceId +
+      "/" +
+      crypto.randomUUID() +
+      "-" +
+      file.name;
 
-}
-
-function prepareReview(){
-
-  showScreen("review");
-
-}
-
-
-/* ---------- CONTINUE ANALYSIS ---------- */
-
-$("continueAnalysisBtn").addEventListener("click", async () => {
-    if(
-      !state.parsedRecords ||
-      state.parsedRecords.length === 0
-    ){
-      toast("No parsed records available.");
-      return;
-    }
-
-    if(!state.workspaceId){
-      toast("Workspace is not available.");
-      return;
-    }
-
-    try{
-
-      const file = state.selectedFile;
-
-      const storagePath =
-        state.workspaceId +
-        "/" +
-        crypto.randomUUID() +
-        "-" +
-        file.name;
-
-      const { error: uploadError } =
-        await supabaseClient.storage
-          .from("sav3ue-datasets")
-          .upload(
-            storagePath,
-            file,
-            {
-              contentType: file.type || "application/octet-stream",
-              upsert: false
-            }
-          );
-
-      if(uploadError) throw uploadError;
-
-      const { data: dataset, error: registerError } =
-        await supabaseClient.rpc(
-          "register_dataset_v1",
+    const { error: uploadError } =
+      await supabaseClient.storage
+        .from("sav3ue-datasets")
+        .upload(
+          storagePath,
+          file,
           {
-            p_workspace_id: state.workspaceId,
-            p_source_name: file.name,
-            p_filename: file.name,
-            p_mime_type: file.type || "application/octet-stream",
-            p_file_size: file.size,
-            p_storage_bucket: "sav3ue-datasets",
-            p_storage_path: storagePath,
-            p_checksum: null,
-            p_dataset_name: file.name
+            contentType: file.type || "application/octet-stream",
+            upsert: false
           }
         );
 
-      if(registerError) throw registerError;
+    if(uploadError) throw uploadError;
 
-      const records = state.parsedRecords;
-      const batchSize = 500;
-
-      for(
-        let i = 0;
-        i < records.length;
-        i += batchSize
-      ){
-
-        const batch =
-          records.slice(i, i + batchSize);
-
-        const { error: persistError } =
-          await supabaseClient.rpc(
-            "persist_dataset_records_v1",
-            {
-              p_workspace_id: state.workspaceId,
-              p_dataset_id: dataset.dataset_id,
-              p_source_file_id: dataset.source_file_id,
-              p_records: batch
-            }
-          );
-
-        if(persistError) throw persistError;
-      }
-
-      toast(
-        records.length +
-        " records persisted successfully."
+    const { data: dataset, error: registerError } =
+      await supabaseClient.rpc(
+        "register_dataset_v1",
+        {
+          p_workspace_id: state.workspaceId,
+          p_source_name: file.name,
+          p_filename: file.name,
+          p_mime_type: file.type || "application/octet-stream",
+          p_file_size: file.size,
+          p_storage_bucket: "sav3ue-datasets",
+          p_storage_path: storagePath,
+          p_checksum: null,
+          p_dataset_name: file.name
+        }
       );
 
-      addActivity(
-        "Dataset persisted successfully.",
-        "Just now"
+    if(registerError) throw registerError;
+
+    const records = state.parsedRecords;
+    const batchSize = 500;
+
+    for(
+      let i = 0;
+      i < records.length;
+      i += batchSize
+    ){
+
+      const batch =
+        records.slice(i, i + batchSize);
+
+      const { error: persistError } =
+        await supabaseClient.rpc(
+          "persist_dataset_records_v1",
+          {
+            p_workspace_id: state.workspaceId,
+            p_dataset_id: dataset.dataset_id,
+            p_source_file_id: dataset.source_file_id,
+            p_records: batch
+          }
+        );
+
+      if(persistError) throw persistError;
+
+      console.log(
+        "SAV3UE persisted:",
+        Math.min(i + batch.length, records.length),
+        "/",
+        records.length
       );
+    }
+
+    toast(
+      records.length +
+      " records persisted successfully."
+    );
+
+    addActivity(
+      "Dataset persisted successfully.",
+      "Just now"
+    );
+
+    setTimeout(() => {
 
       showScreen("workspace");
 
@@ -2975,23 +2975,24 @@ $("continueAnalysisBtn").addEventListener("click", async () => {
         "Analysis workspace is ready."
       );
 
-    }catch(error){
+    },500);
 
-      console.error(
-        "SAV3UE persistence error:",
-        error
-      );
+  }catch(error){
 
-      toast(
-        error.message ||
-        "Unable to persist dataset."
-      );
+    console.error(
+      "SAV3UE persistence error:",
+      error
+    );
 
-    }
+    toast(
+      error.message ||
+      "Unable to persist dataset."
+    );
 
-  });
-      
-    
+  }
+
+});
+
   /* ---------- ACTIVITY ---------- */
 
   function addActivity(text,time){
