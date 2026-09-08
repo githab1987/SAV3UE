@@ -2800,42 +2800,210 @@ async function loadWorkspace(){
   $("continueAnalysisBtn").addEventListener("click", async () => {
 
   if(
-    state.parsedRecords &&
-    state.parsedRecords.length > 0
+    !state.parsedRecords ||
+    state.parsedRecords.length === 0
   ){
+    toast("No parsed records available.");
+    return;
+  }
 
-    console.log(
-      "SAV3UE ready for persistence:",
-      state.parsedRecords.length,
-      "records"
+  if(!state.workspaceId){
+    toast("Workspace is not available.");
+    return;
+  }
+
+  try{
+
+    const file = state.selectedFile;
+
+    const storagePath =
+      state.workspaceId +
+      "/" +
+      crypto.randomUUID() +
+      "-" +
+      file.name;
+
+    const { error: uploadError } =
+      await supabaseClient.storage
+        .from("sav3ue-datasets")
+        .upload(
+          storagePath,
+          file,
+          {
+            contentType: file.type || "application/octet-stream",
+            upsert: false
+          }
+        );
+
+    if(uploadError) throw uploadError;
+
+    const { data: dataset, error: registerError } =
+      await supabaseClient.rpc(
+        "register_dataset_v1",
+        {
+          p_workspace_id: state.workspaceId,
+          p_source_name: file.name,
+          p_filename: file.name,
+          p_mime_type: file.type || "application/octet-stream",
+          p_file_size: file.size,
+          p_storage_bucket: "sav3ue-datasets",
+          p_storage_path: storagePath,
+          p_checksum: null,
+          p_dataset_name: file.name
+        }
+      );
+
+    if(registerError) throw registerError;
+
+    const records = state.parsedRecords;
+    const batchSize = 500;
+
+    for(
+      let i = 0;
+      i < records.length;
+      i += batchSize
+    ){
+
+      const batch =
+        records.slice(i, i + batchSize);
+
+      const { error: persistError } =
+        await supabaseClient.rpc(
+          "persist_dataset_records_v1",
+          {
+            p_workspace_id: state.workspaceId,
+            p_dataset_id: dataset.dataset_id,
+            p_source_file_id: dataset.source_file_id,
+            p_records: batch
+          }
+        );
+
+      $("continueAnalysisBtn").addEventListener("click", async () => {
+
+  if(
+    !state.parsedRecords ||
+    state.parsedRecords.length === 0
+  ){
+    toast("No parsed records available.");
+    return;
+  }
+
+  if(!state.workspaceId){
+    toast("Workspace is not available.");
+    return;
+  }
+
+  try{
+
+    const file = state.selectedFile;
+
+    const storagePath =
+      state.workspaceId +
+      "/" +
+      crypto.randomUUID() +
+      "-" +
+      file.name;
+
+    const { error: uploadError } =
+      await supabaseClient.storage
+        .from("sav3ue-datasets")
+        .upload(
+          storagePath,
+          file,
+          {
+            contentType: file.type || "application/octet-stream",
+            upsert: false
+          }
+        );
+
+    if(uploadError) throw uploadError;
+
+    const { data: dataset, error: registerError } =
+      await supabaseClient.rpc(
+        "register_dataset_v1",
+        {
+          p_workspace_id: state.workspaceId,
+          p_source_name: file.name,
+          p_filename: file.name,
+          p_mime_type: file.type || "application/octet-stream",
+          p_file_size: file.size,
+          p_storage_bucket: "sav3ue-datasets",
+          p_storage_path: storagePath,
+          p_checksum: null,
+          p_dataset_name: file.name
+        }
+      );
+
+    if(registerError) throw registerError;
+
+    const records = state.parsedRecords;
+    const batchSize = 500;
+
+    for(
+      let i = 0;
+      i < records.length;
+      i += batchSize
+    ){
+
+      const batch =
+        records.slice(i, i + batchSize);
+
+      const { error: persistError } =
+        await supabaseClient.rpc(
+          "persist_dataset_records_v1",
+          {
+            p_workspace_id: state.workspaceId,
+            p_dataset_id: dataset.dataset_id,
+            p_source_file_id: dataset.source_file_id,
+            p_records: batch
+          }
+        );
+
+      if(persistError) throw persistError;
+
+      console.log(
+        "SAV3UE persisted:",
+        Math.min(i + batch.length, records.length),
+        "/",
+        records.length
+      );
+    }
+
+    toast(
+      records.length +
+      " records persisted successfully."
+    );
+
+    addActivity(
+      "Dataset persisted successfully.",
+      "Just now"
+    );
+
+    setTimeout(() => {
+
+      showScreen("workspace");
+
+      toast(
+        "Analysis workspace is ready."
+      );
+
+    },500);
+
+  }catch(error){
+
+    console.error(
+      "SAV3UE persistence error:",
+      error
     );
 
     toast(
-      state.parsedRecords.length +
-      " records parsed and ready for persistence."
+      error.message ||
+      "Unable to persist dataset."
     );
 
   }
 
-  toast("Dataset approved for analysis.");
-
-  addActivity(
-    "Dataset approved for analysis.",
-    "Just now"
-  );
-
-  setTimeout(() => {
-
-    showScreen("workspace");
-
-    toast(
-      "Analysis workspace is ready for the next engine stage."
-    );
-
-  },350);
-
 });
-
   /* ---------- ACTIVITY ---------- */
 
   function addActivity(text,time){
