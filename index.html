@@ -2368,9 +2368,18 @@ if(window.supabase){
 
       }else{
 
-        showScreen("ingestion");
+  if(!state.workspaceId){
+    await loadWorkspace();
+  }
 
-      }
+  if(!state.workspaceId){
+    toast("Unable to initialize workspace.");
+    return;
+  }
+
+  showScreen("ingestion");
+
+}
 
     },450);
 
