@@ -2947,25 +2947,24 @@ async function loadWorkspace(){
         records.slice(i, i + batchSize);
 
       const { error: persistError } =
-        await supabaseClient.rpc(
-          "persist_dataset_records_v1",
-          {
-            p_workspace_id: state.workspaceId,
-            p_dataset_id: dataset.dataset_id,
-            p_source_file_id: dataset.source_file_id,
-            p_records: batch
-          }
-        );
-
-      if(persistError) throw persistError;
-
-      console.log(
-        "SAV3UE persisted:",
-        Math.min(i + batch.length, records.length),
-        "/",
-        records.length
-      );
+  await supabaseClient.rpc(
+    "persist_dataset_records_v1",
+    {
+      p_workspace_id: state.workspaceId,
+      p_dataset_id: dataset.dataset_id,
+      p_source_file_id: dataset.source_file_id,
+      p_records: batch
     }
+  );
+
+if(persistError) throw persistError;
+
+console.log(
+  "SAV3UE persisted:",
+  Math.min(i + batch.length, records.length),
+  "/",
+  records.length
+);
 
     toast(
       records.length +
