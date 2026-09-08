@@ -2058,7 +2058,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 let supabaseClient = null;
 
 if(window.supabase){
-  supabaseClient = window.supabase.createClient(
+  supabaseClient = window.supabase.createClient()
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
   {
