@@ -2109,32 +2109,40 @@ if(window.supabase){
 
   const $ = (id) => document.getElementById(id);
   
-  function showScreen(name, pushHistory = true){
+function showScreen(name, pushHistory = true){
 
-    if(!screens.includes(name)) return;
+  if(!screens.includes(name)) return;
 
-    if(pushHistory && state.screen !== name){
-      state.history.push(state.screen);
-    }
-
-    state.screen = name;
-
-    screens.forEach(screen => {
-      const el = $(screen + "Screen");
-      if(el){
-        el.classList.toggle("hidden", screen !== name);
-      }
-    });
-
-    updateTopbar();
-
-    window.scrollTo({
-      top:0,
-      behavior:"smooth"
-    });
+  if(pushHistory && state.screen !== name){
+    state.history.push(state.screen);
   }
 
-  function back(){
+  state.screen = name;
+
+  screens.forEach(screen => {
+    const el = $(screen + "Screen");
+    if(el){
+      el.classList.toggle("hidden", screen !== name);
+    }
+  });
+
+  updateTopbar();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+function setProcessStep(id, status){
+  const el = $(id);
+  if(!el) return;
+
+  el.classList.remove("waiting","active","done");
+  el.classList.add(status);
+}
+
+function back(){
 
     if(state.history.length === 0){
       showScreen("landing", false);
