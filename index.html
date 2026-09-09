@@ -1382,31 +1382,29 @@
           <!-- METRICS -->
           <div class="snapshot-grid">
 
-            <div class="card metric">
-              <div class="metric-label">Revenue</div>
-              <div class="metric-value">—</div>
-              <div class="metric-change">Waiting for data</div>
-            </div>
+             <div class="card metric">
+             <div class="metric-label">Revenue</div>
+             <div class="metric-value" id="metricRevenue">—</div>
+              <div class="metric-change" id="metricRevenueNote">Waiting for data</div>
+              </div>
 
-            <div class="card metric">
+              <div class="card metric">
               <div class="metric-label">Expenses</div>
-              <div class="metric-value">—</div>
-              <div class="metric-change">Waiting for data</div>
-            </div>
+              <div class="metric-value" id="metricExpenses">—</div>
+              <div class="metric-change" id="metricExpensesNote">Waiting for data</div>
+              </div>
 
-            <div class="card metric">
+              <div class="card metric">
               <div class="metric-label">Net Result</div>
-              <div class="metric-value">—</div>
-              <div class="metric-change">Waiting for data</div>
-            </div>
+              <div class="metric-value" id="metricNetResult">—</div>
+              <div class="metric-change" id="metricNetResultNote">Waiting for data</div>
+              </div>
 
-            <div class="card metric">
+              <div class="card metric">
               <div class="metric-label">Tax Exposure</div>
-              <div class="metric-value">—</div>
-              <div class="metric-change">Waiting for data</div>
-            </div>
-
-          </div>
+              <div class="metric-value" id="metricTaxExposure">—</div>
+              <div class="metric-change" id="metricTaxExposureNote">Waiting for data</div>
+              </div>
 
           <div class="dashboard-grid">
 
@@ -2410,6 +2408,42 @@ $("approveHumanBtn").addEventListener("click", async () => {
 
 async function loadWorkspace(){
 
+  function formatRupiah(n){
+  const num = Number(n) || 0;
+  return "Rp " + num.toLocaleString("id-ID", { maximumFractionDigits: 0 });
+}
+
+async function renderWorkspaceSummary(){
+
+  if(!state.workspaceId) return;
+
+  const { data, error } =
+    await supabaseClient.rpc("compute_workspace_summary_v1", {
+      p_workspace_id: state.workspaceId
+    });
+
+  if(error){
+    console.error("Summary error:", error);
+    toast("Unable to load financial summary.");
+    return;
+  }
+
+  $("metricRevenue").textContent = formatRupiah(data.revenue);
+  $("metricExpenses").textContent = formatRupiah(data.expenses);
+  $("metricNetResult").textContent = formatRupiah(data.net_result);
+  $("metricTaxExposure").textContent = formatRupiah(data.tax_exposure);
+
+  const note = data.total_records + " records";
+  $("metricRevenueNote").textContent = note;
+  $("metricExpensesNote").textContent = note;
+  $("metricNetResultNote").textContent = note;
+  $("metricTaxExposureNote").textContent =
+    data.unresolved_count > 0
+      ? data.unresolved_count + " need review"
+      : note;
+
+}
+
   if(!state.authenticated){
     showScreen("auth");
     return;
@@ -2425,15 +2459,12 @@ async function loadWorkspace(){
   }
 
   if(data && data.length > 0){
-
-    state.workspaceId = data[0].id;
-
-    showScreen("workspace");
-
-    toast("Workspace loaded.");
-
-    return;
-  }
+   state.workspaceId = data[0].id;
+   showScreen("workspace");
+   renderWorkspaceSummary();   // ← baris baru
+   toast("Workspace loaded.");
+   return;
+ }
 
   const { data: newWorkspace, error: createError } =
     await supabaseClient.rpc(
@@ -2450,12 +2481,12 @@ async function loadWorkspace(){
     return;
   }
 
-  state.workspaceId = newWorkspace;
+    state.workspaceId = newWorkspace;
+    showScreen("workspace");
+    renderWorkspaceSummary();   // ← baris baru
+    toast("Workspace created.");
 
-  showScreen("workspace");
-
-  toast("Workspace created.");
-}
+  });
 
   /* ---------- WORKSPACE ---------- */
 
