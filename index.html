@@ -2406,9 +2406,7 @@ $("approveHumanBtn").addEventListener("click", async () => {
 
   /* ---------- REAL WORKSPACE ---------- */
 
-async function loadWorkspace(){
-
-  function formatRupiah(n){
+function formatRupiah(n){
   const num = Number(n) || 0;
   return "Rp " + num.toLocaleString("id-ID", { maximumFractionDigits: 0 });
 }
@@ -2444,6 +2442,8 @@ async function renderWorkspaceSummary(){
 
 }
 
+async function loadWorkspace(){
+
   if(!state.authenticated){
     showScreen("auth");
     return;
@@ -2459,12 +2459,17 @@ async function renderWorkspaceSummary(){
   }
 
   if(data && data.length > 0){
-   state.workspaceId = data[0].id;
-   showScreen("workspace");
-   renderWorkspaceSummary();   // ← baris baru
-   toast("Workspace loaded.");
-   return;
- }
+
+    state.workspaceId = data[0].id;
+
+    showScreen("workspace");
+
+    renderWorkspaceSummary();
+
+    toast("Workspace loaded.");
+
+    return;
+  }
 
   const { data: newWorkspace, error: createError } =
     await supabaseClient.rpc(
@@ -2481,12 +2486,14 @@ async function renderWorkspaceSummary(){
     return;
   }
 
-    state.workspaceId = newWorkspace;
-    showScreen("workspace");
-    renderWorkspaceSummary();   // ← baris baru
-    toast("Workspace created.");
+  state.workspaceId = newWorkspace;
 
-  });
+  showScreen("workspace");
+
+  renderWorkspaceSummary();
+
+  toast("Workspace created.");
+}
 
   /* ---------- WORKSPACE ---------- */
 
