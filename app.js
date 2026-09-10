@@ -463,19 +463,16 @@ async function parseFileToRecords(file){
   return XLSX.utils.sheet_to_json(sheet, { defval: null });
 }
 
-const REQUIRED_COLUMNS = ["Date","Type","Gross"];
+const EXPECTED_COLUMNS = ["Date","Type","Gross"];
 
 function validateRecordColumns(records){
   if(!records || records.length === 0){
     return { valid:false, message:"File kosong atau tidak terbaca." };
   }
   const sample = records[0];
-  const missing = REQUIRED_COLUMNS.filter(col => !(col in sample));
+  const missing = EXPECTED_COLUMNS.filter(col => !(col in sample));
   if(missing.length > 0){
-    return {
-      valid:false,
-      message:"Kolom wajib tidak ditemukan: " + missing.join(", ") + ". Pastikan header file persis sama (huruf besar/kecil sensitif)."
-    };
+    toast("Info: kolom " + missing.join(", ") + " tidak ditemukan — data tetap disimpan, tapi tidak otomatis masuk ke perhitungan Revenue/Expenses.");
   }
   return { valid:true };
 }
