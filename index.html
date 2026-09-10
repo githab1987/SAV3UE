@@ -1457,33 +1457,32 @@
 
               <div class="status-list">
 
-                <div class="status-row">
-                  <span>Workspace</span>
-                  <span class="status success">Ready</span>
-                </div>
-
-                <div class="status-row">
-                  <span>Data source</span>
-                  <span class="status neutral">Waiting</span>
-                </div>
-
-                <div class="status-row">
-                  <span>Validation</span>
-                  <span class="status neutral">Waiting</span>
-                </div>
-
-                <div class="status-row">
-                  <span>Calculation</span>
-                  <span class="status neutral">Waiting</span>
-                </div>
-
-                <div class="status-row">
-                  <span>Audit trace</span>
-                  <span class="status neutral">Waiting</span>
-                </div>
-
+              <div class="status-row">
+                 <span>Workspace</span>
+                 <span class="status success">Ready</span>
               </div>
 
+              <div class="status-row">
+                  <span>Data source</span>
+                  <span class="status neutral" id="statusDataSource">Waiting</span>
+              </div>
+   
+              <div class="status-row">
+                  <span>Validation</span>
+                  <span class="status neutral" id="statusValidation">Waiting</span>
+              </div>
+
+              <div class="status-row">
+                  <span>Calculation</span>
+                  <span class="status neutral" id="statusCalculation">Waiting</span>
+               </div>
+
+               <div class="status-row">
+                  <span>Audit trace</span>
+                  <span class="status neutral" id="statusAuditTrace">Waiting</span>
+               </div>
+
+          </div>
             </section>
 
           </div>
@@ -2413,6 +2412,13 @@ function formatRupiah(n){
 
 async function renderWorkspaceSummary(){
 
+  function setStatusBadge(id, text, kind){
+  const el = $(id);
+  if(!el) return;
+  el.textContent = text;
+  el.classList.remove("success","warning","neutral");
+  el.classList.add(kind);
+}
   if(!state.workspaceId) return;
 
   const { data, error } =
@@ -2441,7 +2447,59 @@ async function renderWorkspaceSummary(){
       : note;
 
 }
+function setStatusBadge(id, text, kind){
+  const el = $(id);
+  if(!el) return;
+  el.textContent = text;
+  el.classList.remove("success","warning","neutral");
+  el.classList.add(kind);
+}
+  showScreen("workspace");
+  renderWorkspaceSummary();
+  runAndRenderAudit();
+  toast("Workspace loaded.");
 
+  showScreen("workspace");
+  renderWorkspaceSummary();
+  runAndRenderAudit();
+  toast("Workspace created.");
+  
+async function runAndRenderAudit(){
+
+  if(!state.workspaceId) return;
+
+  setStatusBadge("statusDataSource", "Checking…", "neutral");
+  setStatusBadge("statusValidation", "Checking…", "neutral");
+  setStatusBadge("statusCalculation", "Running…", "neutral");
+  setStatusBadge("statusAuditTrace", "Waiting", "neutral");
+
+  const { data, error } =
+    await supabaseClient.rpc("run_calculation_v1", {
+      p_workspace_id: state.workspaceId
+    });
+
+  if(error){
+    console.error("Calculation error:", error);
+    setStatusBadge("statusDataSource", "Ready", "success");
+    setStatusBadge("statusValidation", "Ready", "success");
+    setStatusBadge("statusCalculation", "Failed", "warning");
+    setStatusBadge("statusAuditTrace", "Failed", "warning");
+    toast("Unable to run calculation.");
+    return;
+  }
+
+  setStatusBadge("statusDataSource", "Ready", "success");
+  setStatusBadge("statusValidation", "Ready", "success");
+  setStatusBadge("statusCalculation", "Completed", "success");
+  setStatusBadge("statusAuditTrace", "Completed", "success");
+
+  const unresolved = data?.summary?.unresolved_count || 0;
+
+  if(unresolved > 0){
+    setStatusBadge("statusValidation", unresolved + " need review", "warning");
+  }
+ 
+  
 async function loadWorkspace(){
 
   if(!state.authenticated){
@@ -3018,11 +3076,15 @@ async function loadWorkspace(){
 
       showScreen("workspace");
 
-      toast(
-        "Analysis workspace is ready."
-      );
+      renderWorkspaceSummary();
 
-    },500);
+      runAndRenderAudit();
+
+    toast(
+       "Analysis workspace is ready."
+   );
+
+  },500);
 
   }catch(error){
 
