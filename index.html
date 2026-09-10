@@ -2614,41 +2614,180 @@ async function loadWorkspace(){
 
   });
 
-  document.querySelectorAll("[data-workspace-nav]").forEach(btn => {
+  function formatRupiah2(n){
+  const num = Number(n) || 0;
+  return "Rp " + num.toLocaleString("id-ID", { maximumFractionDigits: 0 });
+}
 
-    btn.addEventListener("click", () => {
+async function renderDataPanel(){
+  $("dataPanelCount").textContent = "Loading…";
+  const { data, error } = await supabaseClient.rpc("get_workspace_records_v1", {
+    p_workspace_id: state.workspaceId
+  });
+  if(error){
+    console.error(error);
+    $("dataPanelCount").textContent = "Error";
+    return;
+  }
+  $("dataPanelCount").textContent = data.length + " records";
+  $("dataTableBody").innerHTML = data.map(r => `
+    <tr>
+      <td>${r.date || "-"}</td>
+      <td>${r.type || "-"}</td>
+      <td>${r.counterparty || "-"}</td>
+      <td>${formatRupiah2(r.gross)}</td>
+      <td>${formatRupiah2(r.vat)}</td>
+      <td>${r.status || "-"}</td>
+    </tr>
+  `).join("");
+}
 
-      document.querySelectorAll("[data-workspace-nav]").forEach(item => {
-        item.classList.remove("active");
-      });
+async function renderAuditPanel(){
+  $("auditRunsList").innerHTML = "Loading…";
+  const { data, error } = await supabaseClient.rpc("get_calculation_runs_v1", {
+    p_workspace_id: state.workspaceId
+  });
+  if(error){
+    console.error(error);
+    $("auditRunsList").innerHTML = "Unable to load audit runs.";
+    return;
+  }
+  if(data.length === 0){
+    $("auditRunsList").innerHTML = "<p class='subtle'>No calculation runs yet.</p>";
+    return;
+  }
+  $("auditRunsList").innerHTML = data.map(run => `
+    <div class="audit-run-row">
+      <div style="display:flex;justify-content:space-between;">
+        <strong>${run.status}</strong>
+        <span class="subtle">${new Date(run.started_at).toLocaleString("id-ID")}</span>
+      </div>
+      <div class="subtle" style="margin-top:6px;">
+        Revenue: ${formatRupiah2(run.summary?.revenue)} ·
+        Expenses: ${formatRupiah2(run.summary?.expenses)} ·
+        Net: ${formatRupiah2(run.summary?.net_result)}
+      </div>
+    </div>
+  `).join("");
+}
 
-      btn.classList.add("active");
+async function renderInsightsPanel(){
+  $("insightsNarrativeList").innerHTML = "Loading…";
+  const { data, error } = await supabaseClient.rpc("compute_workspace_summary_v1", {
+    p_workspace_id: state.workspaceId
+  });
+  if(error){
+    console.error(error);
+    $("insightsNarrativeList").innerHTML = "Unable to load insights.";
+    return;
+  }
+  const margin = data.revenue > 0
+    ? ((data.net_result / data.revenue) * 100).toFixed(1)
+    : "0";
+  const points = [
+    { title: "Net margin", text: `Your net result is ${margin}% of revenue across ${data.total_records} records.` },
+    { title: "Tax exposure", text: `Estimated VAT exposure is ${formatRupiah2(data.tax_exposure)}.` }
+  ];
+  if(data.unresolved_count > 0){
+    points.push({
+      title: "Needs review",
+      text: `${data.unresolved_count} transaction(s) are unclassified and excluded from the totals above.`
+    });
+  }
+  $("insightsNarrativeList").innerHTML = points.map(p => `
+    <div class="insight">
+      <div class="insight-title">${p.title}</div>
+      <div class="insight-text">${p.text}</div>
+    </div>
+  `).join("");
+}
 
-      const section = btn.dataset.workspaceNav;
+let cachedRecordsForReport = null;
 
-      if(section === "overview"){
-        toast("Overview selected.");
-      }
+async function renderReportsPanel(){
+  const { data } = await supabaseClient.rpc("get_workspace_records_v1", {
+    p_workspace_id: state.workspaceId
+  });
+  cachedRecordsForReport = data || [];
+}
 
-      if(section === "data"){
-        toast("Data view is ready for the ingestion pipeline.");
-      }
+function downloadBlob(filename, content, mime){
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
-      if(section === "audit"){
-        toast("Audit trace will appear after calculations run.");
-      }
+$("downloadCsvBtn").addEventListener("click", () => {
+  if(!cachedRecordsForReport) return;
+  const header = "Date,Type,Counterparty,Gross,VAT,Status\n";
+  const rows = cachedRecordsForReport.map(r =>
+    [r.date, r.type, r.counterparty, r.gross, r.vat, r.status].join(",")
+  ).join("\n");
+  downloadBlob("sav3ue-records.csv", header + rows, "text/csv");
+});
 
-      if(section === "insights"){
-        toast("Insights will populate after analysis.");
-      }
+$("downloadSummaryBtn").addEventListener("click", async () => {
+  const { data } = await supabaseClient.rpc("compute_workspace_summary_v1", {
+    p_workspace_id: state.workspaceId
+  });
+  const text =
+`SAV3UE Financial Summary
+Revenue: ${formatRupiah2(data.revenue)}
+Expenses: ${formatRupiah2(data.expenses)}
+Net Result: ${formatRupiah2(data.net_result)}
+Tax Exposure: ${formatRupiah2(data.tax_exposure)}
+Total Records: ${data.total_records}
+Unresolved: ${data.unresolved_count}
+Generated: ${new Date().toLocaleString("id-ID")}`;
+  downloadBlob("sav3ue-summary.txt", text, "text/plain");
+});
 
-      if(section === "reports"){
-        toast("Reports will populate after analysis.");
-      }
+document.querySelectorAll("[data-workspace-nav]").forEach(btn => {
 
+  btn.addEventListener("click", () => {
+
+    document.querySelectorAll("[data-workspace-nav]").forEach(item => {
+      item.classList.remove("active");
     });
 
+    btn.classList.add("active");
+
+    const section = btn.dataset.workspaceNav;
+
+    ["overviewPanel","dataPanel","auditPanel","insightsPanel","reportsPanel"]
+      .forEach(id => $(id).classList.add("hidden"));
+
+    if(section === "overview"){
+      $("overviewPanel").classList.remove("hidden");
+    }
+
+    if(section === "data"){
+      $("dataPanel").classList.remove("hidden");
+      renderDataPanel();
+    }
+
+    if(section === "audit"){
+      $("auditPanel").classList.remove("hidden");
+      renderAuditPanel();
+    }
+
+    if(section === "insights"){
+      $("insightsPanel").classList.remove("hidden");
+      renderInsightsPanel();
+    }
+
+    if(section === "reports"){
+      $("reportsPanel").classList.remove("hidden");
+      renderReportsPanel();
+    }
+
   });
+
+});
 
   /* ---------- COMMAND BAR ---------- */
 
