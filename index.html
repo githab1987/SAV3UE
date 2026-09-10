@@ -2405,20 +2405,23 @@ $("approveHumanBtn").addEventListener("click", async () => {
 
   /* ---------- REAL WORKSPACE ---------- */
 
+/* ---------- REAL WORKSPACE ---------- */
+
 function formatRupiah(n){
   const num = Number(n) || 0;
   return "Rp " + num.toLocaleString("id-ID", { maximumFractionDigits: 0 });
 }
 
-async function renderWorkspaceSummary(){
-
-  function setStatusBadge(id, text, kind){
+function setStatusBadge(id, text, kind){
   const el = $(id);
   if(!el) return;
   el.textContent = text;
   el.classList.remove("success","warning","neutral");
   el.classList.add(kind);
 }
+
+async function renderWorkspaceSummary(){
+
   if(!state.workspaceId) return;
 
   const { data, error } =
@@ -2447,23 +2450,7 @@ async function renderWorkspaceSummary(){
       : note;
 
 }
-function setStatusBadge(id, text, kind){
-  const el = $(id);
-  if(!el) return;
-  el.textContent = text;
-  el.classList.remove("success","warning","neutral");
-  el.classList.add(kind);
-}
-  showScreen("workspace");
-  renderWorkspaceSummary();
-  runAndRenderAudit();
-  toast("Workspace loaded.");
 
-  showScreen("workspace");
-  renderWorkspaceSummary();
-  runAndRenderAudit();
-  toast("Workspace created.");
-  
 async function runAndRenderAudit(){
 
   if(!state.workspaceId) return;
@@ -2498,8 +2485,9 @@ async function runAndRenderAudit(){
   if(unresolved > 0){
     setStatusBadge("statusValidation", unresolved + " need review", "warning");
   }
- 
-  
+
+}
+
 async function loadWorkspace(){
 
   if(!state.authenticated){
@@ -2523,6 +2511,8 @@ async function loadWorkspace(){
     showScreen("workspace");
 
     renderWorkspaceSummary();
+
+    runAndRenderAudit();
 
     toast("Workspace loaded.");
 
@@ -2549,6 +2539,8 @@ async function loadWorkspace(){
   showScreen("workspace");
 
   renderWorkspaceSummary();
+
+  runAndRenderAudit();
 
   toast("Workspace created.");
 }
