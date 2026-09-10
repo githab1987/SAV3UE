@@ -3401,11 +3401,47 @@ $("signOutBtn").addEventListener("click", async () => {
   showScreen("landing", false);
 
 });
+  /* ---------- SESSION PERSISTENCE ---------- */
+
+  async function restoreSession(){
+
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if(error){
+      console.error("Session check error:", error);
+      return;
+    }
+
+    if(data.session && data.session.user){
+
+      state.authenticated = true;
+      state.userEmail = data.session.user.email;
+
+      toast("Welcome back.");
+
+      await loadWorkspace();
+
+    }
+
+  }
+
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+
+    if(event === "SIGNED_OUT"){
+      state.authenticated = false;
+      state.userEmail = null;
+      state.workspaceId = null;
+    }
+
+  });
+
   /* ---------- INITIAL STATE ---------- */
 
   updateTopbar();
 
   showScreen("landing", false);
+
+  restoreSession();
 
 </script>
 
