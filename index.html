@@ -3055,7 +3055,33 @@ document.querySelectorAll("[data-workspace-nav]").forEach(btn => {
       return;
 
     }
+    
+      const REQUIRED_COLUMNS = ["Date","Type","Gross"];
 
+      function validateRecordColumns(records){
+      if(!records || records.length === 0){
+      return { valid:false, message:"File kosong atau tidak terbaca." };
+    }
+      const sample = records[0];
+      const missing = REQUIRED_COLUMNS.filter(col => !(col in sample));
+      if(missing.length > 0){
+      return {
+        valid:false,
+        message:"Kolom wajib tidak ditemukan: " + missing.join(", ") +
+         ". Pastikan header file persis sama (huruf besar/kecil sensitif)."
+      };
+
+     }
+      return { valid:true };
+  }
+
+      const validation = validateRecordColumns(state.parsedRecords);
+      if(!validation.valid){
+      toast(validation.message);
+      state.parsedRecords = null;
+      return;
+  }
+    
     startProcessing();
 
   });
