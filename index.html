@@ -1407,34 +1407,38 @@
             </button>
           </div>
 
+          <div id="overviewPanel">
+
           <!-- METRICS -->
           <div class="snapshot-grid">
 
-             <div class="card metric">
-             <div class="metric-label">Revenue</div>
-             <div class="metric-value" id="metricRevenue">—</div>
+            <div class="card metric">
+              <div class="metric-label">Revenue</div>
+              <div class="metric-value" id="metricRevenue">—</div>
               <div class="metric-change" id="metricRevenueNote">Waiting for data</div>
-              </div>
+            </div>
 
-              <div class="card metric">
+            <div class="card metric">
               <div class="metric-label">Expenses</div>
               <div class="metric-value" id="metricExpenses">—</div>
               <div class="metric-change" id="metricExpensesNote">Waiting for data</div>
-              </div>
+            </div>
 
-              <div class="card metric">
+            <div class="card metric">
               <div class="metric-label">Net Result</div>
               <div class="metric-value" id="metricNetResult">—</div>
               <div class="metric-change" id="metricNetResultNote">Waiting for data</div>
-              </div>
+            </div>
 
-              <div class="card metric">
+            <div class="card metric">
               <div class="metric-label">Tax Exposure</div>
               <div class="metric-value" id="metricTaxExposure">—</div>
               <div class="metric-change" id="metricTaxExposureNote">Waiting for data</div>
-              </div>
+            </div>
+
           </div>
-          <div class="dashboard-grid">
+
+          <div class="dashboard-grid" style="margin-top:16px;">
 
             <!-- INSIGHTS -->
             <section class="card panel">
@@ -1485,32 +1489,32 @@
 
               <div class="status-list">
 
-              <div class="status-row">
-                 <span>Workspace</span>
-                 <span class="status success">Ready</span>
-              </div>
+                <div class="status-row">
+                  <span>Workspace</span>
+                  <span class="status success">Ready</span>
+                </div>
 
-              <div class="status-row">
+                <div class="status-row">
                   <span>Data source</span>
                   <span class="status neutral" id="statusDataSource">Waiting</span>
-              </div>
-   
-              <div class="status-row">
+                </div>
+
+                <div class="status-row">
                   <span>Validation</span>
                   <span class="status neutral" id="statusValidation">Waiting</span>
-              </div>
+                </div>
 
-              <div class="status-row">
+                <div class="status-row">
                   <span>Calculation</span>
                   <span class="status neutral" id="statusCalculation">Waiting</span>
-               </div>
+                </div>
 
-               <div class="status-row">
+                <div class="status-row">
                   <span>Audit trace</span>
                   <span class="status neutral" id="statusAuditTrace">Waiting</span>
-               </div>
+                </div>
 
-          </div>
+              </div>
             </section>
 
           </div>
@@ -1574,6 +1578,67 @@
                   </div>
                 </div>
               </div>
+
+            </div>
+
+          </section>
+
+          </div>
+
+          <!-- DATA PANEL -->
+          <div id="dataPanel" class="hidden">
+            <section class="card panel">
+              <div class="panel-head">
+                <h3>Data</h3>
+                <span class="status neutral" id="dataPanelCount">Loading…</span>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th><th>Type</th><th>Counterparty</th>
+                      <th>Gross</th><th>VAT</th><th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dataTableBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <!-- AUDIT PANEL -->
+          <div id="auditPanel" class="hidden">
+            <section class="card panel">
+              <div class="panel-head">
+                <h3>Audit Runs</h3>
+              </div>
+              <div id="auditRunsList"></div>
+            </section>
+          </div>
+
+          <!-- INSIGHTS PANEL -->
+          <div id="insightsPanel" class="hidden">
+            <section class="card panel">
+              <div class="panel-head">
+                <h3>Insights</h3>
+              </div>
+              <div id="insightsNarrativeList"></div>
+            </section>
+          </div>
+
+          <!-- REPORTS PANEL -->
+          <div id="reportsPanel" class="hidden">
+            <section class="card panel">
+              <div class="panel-head">
+                <h3>Reports</h3>
+              </div>
+              <p class="subtle">Download your financial summary and transaction data.</p>
+              <div style="display:flex;gap:10px;margin-top:14px;">
+                <button class="btn btn-primary" id="downloadSummaryBtn">Download Summary (.txt)</button>
+                <button class="btn btn-secondary" id="downloadCsvBtn">Download Records (.csv)</button>
+              </div>
+            </section>
+          </div>
 
             </div>
 
