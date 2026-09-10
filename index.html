@@ -1588,10 +1588,15 @@
           <!-- DATA PANEL -->
           <div id="dataPanel" class="hidden">
             <section class="card panel">
-              <div class="panel-head">
+            <div class="panel-head">
                 <h3>Data</h3>
                 <span class="status neutral" id="dataPanelCount">Loading…</span>
               </div>
+
+              <button class="btn btn-danger btn-small" id="deleteAllDataBtn" style="margin-bottom:12px;">
+                 Delete All Records in This Workspace
+              </button>
+              
               <div style="overflow-x:auto;">
                 <table class="data-table">
                   <thead>
